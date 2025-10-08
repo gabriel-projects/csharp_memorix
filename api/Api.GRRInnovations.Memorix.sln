@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.GRRInnovations.Memorix", "Api.GRRInnovations.Memorix\Api.GRRInnovations.Memorix.csproj", "{D53B54D8-0972-4AAB-825C-D28F915E4FDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.GRRInnovations.Memorix.Application", "Api.GRRInnovations.Memorix.Application\Api.GRRInnovations.Memorix.Application.csproj", "{E7B7CE20-05D9-4D69-97AD-F99B3F3AE35B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.GRRInnovations.Memorix.Domain", "Api.GRRInnovations.Memorix.Domain\Api.GRRInnovations.Memorix.Domain.csproj", "{8E188681-C36C-4D7B-B429-EF73B55D13B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.GRRInnovations.Memorix.Infrastructure", "Api.GRRInnovations.Memorix.Infrastructure\Api.GRRInnovations.Memorix.Infrastructure.csproj", "{A91FBF7C-9711-4DDD-BB11-95E1290A9615}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.GRRInnovations.Memorix.Shared", "Api.GRRInnovations.Memorix.Shared\Api.GRRInnovations.Memorix.Shared.csproj", "{4E234702-175E-46EC-9FF4-2DDBA64713AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D53B54D8-0972-4AAB-825C-D28F915E4FDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D53B54D8-0972-4AAB-825C-D28F915E4FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D53B54D8-0972-4AAB-825C-D28F915E4FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D53B54D8-0972-4AAB-825C-D28F915E4FDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7B7CE20-05D9-4D69-97AD-F99B3F3AE35B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7B7CE20-05D9-4D69-97AD-F99B3F3AE35B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7B7CE20-05D9-4D69-97AD-F99B3F3AE35B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7B7CE20-05D9-4D69-97AD-F99B3F3AE35B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E188681-C36C-4D7B-B429-EF73B55D13B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E188681-C36C-4D7B-B429-EF73B55D13B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E188681-C36C-4D7B-B429-EF73B55D13B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E188681-C36C-4D7B-B429-EF73B55D13B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A91FBF7C-9711-4DDD-BB11-95E1290A9615}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A91FBF7C-9711-4DDD-BB11-95E1290A9615}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A91FBF7C-9711-4DDD-BB11-95E1290A9615}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A91FBF7C-9711-4DDD-BB11-95E1290A9615}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E234702-175E-46EC-9FF4-2DDBA64713AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E234702-175E-46EC-9FF4-2DDBA64713AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E234702-175E-46EC-9FF4-2DDBA64713AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E234702-175E-46EC-9FF4-2DDBA64713AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

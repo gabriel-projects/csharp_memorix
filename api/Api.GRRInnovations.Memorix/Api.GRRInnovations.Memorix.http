@@ -1,0 +1,6 @@
+@Api.GRRInnovations.Memorix_HostAddress = http://localhost:5076
+
+GET {{Api.GRRInnovations.Memorix_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
