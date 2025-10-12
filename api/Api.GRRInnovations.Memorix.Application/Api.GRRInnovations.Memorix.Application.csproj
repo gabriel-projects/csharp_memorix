@@ -6,4 +6,17 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\Services\" />
+    <Folder Include="Interfaces\Persistence\" />
+    <Folder Include="Services\" />
+    <Folder Include="Wrappers\In\" />
+    <Folder Include="Wrappers\Out\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Api.GRRInnovations.Memorix.Domain\Api.GRRInnovations.Memorix.Domain.csproj" />
+    <ProjectReference Include="..\Api.GRRInnovations.Memorix.Shared\Api.GRRInnovations.Memorix.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
