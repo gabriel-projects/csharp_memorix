@@ -13,6 +13,8 @@ namespace Api.GRRInnovations.Memorix.Domain.Entities
         public string Front { get; set; }
         public string Back { get; set; }
         public string? Example { get; set; }
+
+        public Guid DeckUid { get; set; }
         public Deck? DbDeck { get; set; }
         public IDeck? Deck
         {

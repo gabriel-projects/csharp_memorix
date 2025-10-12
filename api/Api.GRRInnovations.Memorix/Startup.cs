@@ -1,4 +1,6 @@
-﻿using Api.GRRInnovations.Memorix.Infrastructure.Helpers;
+﻿using Api.GRRInnovations.Memorix.Application;
+using Api.GRRInnovations.Memorix.Infrastructure;
+using Api.GRRInnovations.Memorix.Infrastructure.Helpers;
 using Scalar.AspNetCore;
 
 namespace Api.GRRInnovations.Memorix
@@ -16,6 +18,9 @@ namespace Api.GRRInnovations.Memorix
         {
             services.AddControllers();
             services.AddAuthorization();
+
+            services.AddApplicationServices();
+            services.AddInfrastructureServices(Configuration);
 
             ConfigureSwagger(services);
         }

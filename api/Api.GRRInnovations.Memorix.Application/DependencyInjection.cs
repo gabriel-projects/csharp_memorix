@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
+using Api.GRRInnovations.Memorix.Application.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +13,7 @@ namespace Api.GRRInnovations.Memorix.Application
     {
         public static void AddApplicationServices(this IServiceCollection services)
         {
-
+            services.AddScoped<IDeckService, DeckService>();
         }
     }
 }

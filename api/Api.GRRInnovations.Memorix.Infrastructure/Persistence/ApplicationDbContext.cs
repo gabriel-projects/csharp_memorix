@@ -23,7 +23,17 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
+            DefaultModelSetup<Card>(modelBuilder);
+            modelBuilder.Entity<Card>().Ignore(x => x.Deck);
+            modelBuilder.Entity<Card>().HasOne(x => x.DbDeck).WithMany(x => x.DbCards).HasForeignKey(x => x.DeckUid).OnDelete(DeleteBehavior.Cascade);
 
+            DefaultModelSetup<Deck>(modelBuilder);
+            modelBuilder.Entity<Deck>().Ignore(x => x.Cards);
+            modelBuilder.Entity<Deck>().Ignore(x => x.User);
+            modelBuilder.Entity<Deck>().HasOne(x => x.DbUser).WithMany(x => x.DbDecks).HasForeignKey(x => x.UserUid).OnDelete(DeleteBehavior.Cascade);
+
+            DefaultModelSetup<User>(modelBuilder);
+            modelBuilder.Entity<User>().Ignore(x => x.Decks);
         }
 
         public override int SaveChanges()

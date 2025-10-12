@@ -11,7 +11,14 @@ namespace Api.GRRInnovations.Memorix.Domain.Entities
     public class Deck : BaseModel, IDeck
     {
         public string Name { get; set; }
-        public IUser User { get; set; }
+        public Guid UserUid { get; set; }
+
+        public User? DbUser { get; set; }
+        public IUser? User
+        {
+            get => DbUser;
+            set => DbUser = value as User;
+        }
 
         public List<Card>? DbCards { get; set; }
         public List<ICard>? Cards
