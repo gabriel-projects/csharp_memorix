@@ -55,7 +55,13 @@ namespace Api.GRRInnovations.Memorix
                 {
                     endpoints.MapOpenApi();
 
-                    endpoints.MapScalarApiReference();
+                    endpoints.MapScalarApiReference(options =>
+                    {
+                        options
+                            .WithTitle("Memorix API")
+                            .WithTheme(ScalarTheme.Mars)
+                            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+                    });
                 }
             });
         }
