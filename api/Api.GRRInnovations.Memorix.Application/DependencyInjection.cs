@@ -13,7 +13,10 @@ namespace Api.GRRInnovations.Memorix.Application
     {
         public static void AddApplicationServices(this IServiceCollection services)
         {
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ICardService, CardService>();
             services.AddScoped<IDeckService, DeckService>();
+            services.AddScoped<IUserService, UserService>();
         }
     }
 }

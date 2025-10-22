@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Api.GRRInnovations.Memorix.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace Api.GRRInnovations.Memorix.Application.Interfaces.Services
 {
     public interface IUserService
     {
+        Task<IUser> CreateUserAsync(IUser userModel);
     }
 }

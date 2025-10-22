@@ -17,7 +17,9 @@ namespace Api.GRRInnovations.Memorix.Infrastructure
     {
         public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<ICardRepository, CardRepository>();
             services.AddScoped<IDeckRepository, DeckRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddDbContext<ApplicationDbContext>(opt =>
                 opt.UseInMemoryDatabase("MemorixDb"));
