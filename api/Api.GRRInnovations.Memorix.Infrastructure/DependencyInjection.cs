@@ -1,7 +1,9 @@
 ﻿using Api.GRRInnovations.Memorix.Application.Interfaces.Persistence;
+using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
 using Api.GRRInnovations.Memorix.Infrastructure.Helpers;
 using Api.GRRInnovations.Memorix.Infrastructure.Persistence;
 using Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories;
+using Api.GRRInnovations.Memorix.Infrastructure.Security.Crypto;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,10 +22,11 @@ namespace Api.GRRInnovations.Memorix.Infrastructure
             services.AddScoped<ICardRepository, CardRepository>();
             services.AddScoped<IDeckRepository, DeckRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ICryptoService, CryptoService>();
 
-            services.AddDbContext<ApplicationDbContext>(opt =>
-                opt.UseInMemoryDatabase("MemorixDb"));
+            services.AddDbContext<ApplicationDbContext>(opt => opt.UseInMemoryDatabase("MemorixDb"));
 
+            //todo: if not using in-memory database, use this code to connect to real database
             //todo: it is not yet possible to test this because the database is not yet created
             //AddDbContext(services, configuration);
         }

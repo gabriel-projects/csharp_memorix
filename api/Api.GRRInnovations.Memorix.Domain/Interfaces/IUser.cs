@@ -8,10 +8,9 @@ namespace Api.GRRInnovations.Memorix.Domain.Interfaces
 {
     public interface IUser : IBaseModel
     {
-        string Username { get; set; }
+        string Name { get; set; }
         string Email { get; set; }
         string PasswordHash { get; set; }
-
         List<IDeck> Decks { get; set; }
     }
 }

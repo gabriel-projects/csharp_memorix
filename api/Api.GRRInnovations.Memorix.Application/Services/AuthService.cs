@@ -14,22 +14,39 @@ namespace Api.GRRInnovations.Memorix.Application.Services
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ICryptoService _cryptoService;
 
-        public AuthService(IUserRepository userRepository)
+        public AuthService(IUserRepository userRepository, 
+            ICryptoService cryptoService)
         {
             _userRepository = userRepository;
+            _cryptoService = cryptoService;
         }
 
         public async Task<IUser> RegisterAsync(WrapperInRegister wrapperInRegister)
         {
-            User user = new User
+            User userModel = new User
             {
                 PasswordHash = wrapperInRegister.Password,
-                Email = wrapperInRegister.Login,
-                Username = "todo"
+                Email = wrapperInRegister.Email,
+                Name = wrapperInRegister.Name
             };
 
-            return await _userRepository.CreateUserAsync(user);
+            userModel.PasswordHash = _cryptoService.HashPassword(userModel.PasswordHash);
+
+            return await _userRepository.CreateUserAsync(userModel);
+        }
+
+        private Task<bool> CorrectPassword(string localPassword, string remotePassword)
+        {
+            if (remotePassword == null) return Task.FromResult(false);
+
+            var passwordV1 = _cryptoService.HashPassword(remotePassword);
+
+            if (localPassword == passwordV1) return Task.FromResult(true);
+            if (!_cryptoService.VerifyPassword(passwordV1, localPassword)) return Task.FromResult(true);
+
+            return Task.FromResult(false);
         }
     }
 }

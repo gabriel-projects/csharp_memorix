@@ -10,7 +10,7 @@ namespace Api.GRRInnovations.Memorix.Domain.Entities
 {
     public class User : BaseModel, IUser
     {
-        public string Username { get; set; }
+        public string Name { get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }
 

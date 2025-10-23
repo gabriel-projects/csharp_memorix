@@ -38,7 +38,7 @@ namespace Api.GRRInnovations.Memorix.Controllers
                 Uid = Guid.NewGuid(),
                 Email = "ga",
                 PasswordHash = "123",
-                Username = "gab"
+                Name = "gab"
             });
 
             return new OkObjectResult(wrapperInDeck);

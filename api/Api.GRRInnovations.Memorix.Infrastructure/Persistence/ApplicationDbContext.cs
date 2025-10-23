@@ -34,6 +34,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence
 
             DefaultModelSetup<User>(modelBuilder);
             modelBuilder.Entity<User>().Ignore(x => x.Decks);
+            modelBuilder.Entity<User>().HasIndex(x => x.Email).IsUnique();
         }
 
         public override int SaveChanges()
