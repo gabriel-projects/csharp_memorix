@@ -416,5 +416,5 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
-/api/Api.GRRInnovations.Memorix/appsettings.Development.json
 /api/Api.GRRInnovations.Memorix/appsettings.json
+/api/Api.GRRInnovations.Memorix/appsettings.Development.json
