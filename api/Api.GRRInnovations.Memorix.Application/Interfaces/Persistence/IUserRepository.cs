@@ -14,6 +14,8 @@ namespace Api.GRRInnovations.Memorix.Application.Interfaces.Persistence
 
         Task<IUser> GetUserAsync(IUser user);
 
+        Task<List<IUser>> GetUsersAsync(UserOptions userOptions);
+
         Task<bool> ExistsByEmailAsync(Email email);
     }
 }

@@ -4,6 +4,7 @@ using Api.GRRInnovations.Memorix.Infrastructure.Helpers;
 using Api.GRRInnovations.Memorix.Infrastructure.Persistence;
 using Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories;
 using Api.GRRInnovations.Memorix.Infrastructure.Security.Crypto;
+using Api.GRRInnovations.Memorix.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure
             services.AddScoped<IDeckRepository, DeckRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ICryptoService, CryptoService>();
+            services.AddScoped<IJwtService, JwtService>();
 
             //services.AddDbContext<ApplicationDbContext>(opt => opt.UseInMemoryDatabase("MemorixDb"));
 

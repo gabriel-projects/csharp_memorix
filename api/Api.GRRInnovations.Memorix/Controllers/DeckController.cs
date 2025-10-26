@@ -36,7 +36,7 @@ namespace Api.GRRInnovations.Memorix.Controllers
 
             await _deckService.AddDeckAsync(deckModel, new User() { 
                 Uid = Guid.NewGuid(),
-                Email = "ga",
+                Email = new Domain.ValueObjects.Email("ga"),
                 PasswordHash = "123",
                 Name = "gab"
             });

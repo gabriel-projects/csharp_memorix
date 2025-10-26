@@ -41,5 +41,22 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task<List<IUser>> GetUsersAsync(UserOptions userOptions)
+        {
+            return await Query(userOptions).ToListAsync<IUser>();
+        }
+
+        private IQueryable<User> Query(UserOptions options)
+        {
+            var query = _dbContext.Users.AsQueryable();
+
+            if (options.FilterLogins.Any()) query = query.Where(p => options.FilterLogins.Contains(p.Email));
+            if (options.FilterUsers.Any()) query = query.Where(p => options.FilterUsers.Contains(p.Uid));
+            if (options.IncludeUserDecks) query = query.Include(p => p.DbDecks);
+            if (options.IncludeUserCards) query = query.Include(p => p.DbDecks).ThenInclude(p => p.DbCards);
+
+            return query;
+        }
     }
 }

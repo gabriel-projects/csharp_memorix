@@ -6,5 +6,6 @@ namespace Api.GRRInnovations.Memorix.Application.Interfaces.Services
     public interface IAuthService
     {
         Task<IUser> RegisterAsync(IUser user);
+        Task<IUser> ValidateAsync(IUser user);
     }
 }

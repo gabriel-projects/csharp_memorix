@@ -22,11 +22,9 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Api.GRRInnovations.Memorix.Application\Api.GRRInnovations.Memorix.Application.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Security\Authentication\" />
   </ItemGroup>
 </Project>

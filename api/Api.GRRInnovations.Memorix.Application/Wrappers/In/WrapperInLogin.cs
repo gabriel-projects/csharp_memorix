@@ -1,10 +1,15 @@
 ﻿using Api.GRRInnovations.Memorix.Domain.Interfaces;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Api.GRRInnovations.Memorix.Application.Wrappers.In
 {
-    public class WrapperInRegister<TUser> : WrapperBase<TUser, WrapperInRegister<TUser>>
+    public class WrapperInLogin<TUser> : WrapperBase<TUser, WrapperInLogin<TUser>>
         where TUser : IUser
     {
         [JsonPropertyName("login")]
@@ -23,14 +28,6 @@ namespace Api.GRRInnovations.Memorix.Application.Wrappers.In
         {
             get => Data.PasswordHash;
             set => Data.PasswordHash = value;
-        }
-
-        [JsonPropertyName("name")]
-        [MaxLength(150)]
-        public required string Name
-        {
-            get => Data.Name;
-            set => Data.Name = value;
         }
     }
 }

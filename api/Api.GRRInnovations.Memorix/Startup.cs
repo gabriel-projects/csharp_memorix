@@ -1,4 +1,5 @@
 ﻿using Api.GRRInnovations.Memorix.Application;
+using Api.GRRInnovations.Memorix.Domain.Models;
 using Api.GRRInnovations.Memorix.Filters;
 using Api.GRRInnovations.Memorix.Infrastructure;
 using Api.GRRInnovations.Memorix.Infrastructure.Helpers;
@@ -34,6 +35,12 @@ namespace Api.GRRInnovations.Memorix
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+
+            var jwtSection = Configuration.GetSection("JwtSettings");
+            services.Configure<JwtSettings>(jwtSection);
+
+            var jwtSettings = new JwtSettings();
+            jwtSection.Bind(jwtSettings);
 
             ConfigureSwagger(services);
         }

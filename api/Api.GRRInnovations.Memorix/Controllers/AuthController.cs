@@ -1,11 +1,10 @@
 ﻿using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
+using Api.GRRInnovations.Memorix.Application.Services;
 using Api.GRRInnovations.Memorix.Application.Wrappers.In;
 using Api.GRRInnovations.Memorix.Application.Wrappers.Out;
 using Api.GRRInnovations.Memorix.Domain.Entities;
-using Api.GRRInnovations.Memorix.Domain.Interfaces;
 using Api.GRRInnovations.Memorix.Domain.Models;
-using Api.GRRInnovations.Memorix.Filters;
-using Microsoft.AspNetCore.Identity.Data;
+using Api.GRRInnovations.Memorix.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.GRRInnovations.Memorix.Controllers
@@ -15,10 +14,12 @@ namespace Api.GRRInnovations.Memorix.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IJwtService _jwtService;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, IJwtService jwtService)
         {
             _authService = authService;
+            _jwtService = jwtService;
         }
 
         [HttpPost("register")]
@@ -36,12 +37,19 @@ namespace Api.GRRInnovations.Memorix.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> Login([FromBody] WrapperInLogin<User> wrapperInLogin)
         {
-            // Login logic here
-            return Ok();
+            var wrapperModel = await wrapperInLogin.Result();
+            if (wrapperModel == null)
+                return BadRequest(Result<string>.Fail("Invalid input data."));
+
+            var remoteUser = await _authService.ValidateAsync(wrapperModel);
+            if (remoteUser == null) return new UnauthorizedResult();
+
+            var userToken = _jwtService.GenerateToken(remoteUser);
+
+            var response = await WrapperOutJwtResult.From(userToken).ConfigureAwait(false);
+            return new OkObjectResult(Result<WrapperOutJwtResult>.Ok(response));
         }
-
-
     }
 }

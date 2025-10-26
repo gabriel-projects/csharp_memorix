@@ -27,7 +27,7 @@ namespace Api.GRRInnovations.Memorix.Application.Wrappers.Out
         public string Email
         {
             get => Data.Email;
-            set => Data.Email = value;
+            set => Data.Email = new Domain.ValueObjects.Email(value);
         }
 
         [JsonPropertyName("created_at")]

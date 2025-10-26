@@ -4,6 +4,7 @@ using Api.GRRInnovations.Memorix.Application.Wrappers.In;
 using Api.GRRInnovations.Memorix.Domain.Entities;
 using Api.GRRInnovations.Memorix.Domain.Exceptions;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
+using Api.GRRInnovations.Memorix.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,23 @@ namespace Api.GRRInnovations.Memorix.Application.Services
             await _userRepository.CreateUserAsync(user);
 
             return user;
+        }
+
+        public async Task<IUser> ValidateAsync(IUser user)
+        {
+            var options = UserOptions.Create()
+                .WithFilterLogins(new List<string> { user.Email })
+                .Build();
+
+            var users = await _userRepository.GetUsersAsync(options);
+
+            var remoteUser = users.FirstOrDefault();
+            if (remoteUser != null && !await CorrectPassword(user.PasswordHash, remoteUser.PasswordHash))
+            {
+                remoteUser = null;
+            }
+
+            return remoteUser;
         }
 
         private Task<bool> CorrectPassword(string localPassword, string remotePassword)

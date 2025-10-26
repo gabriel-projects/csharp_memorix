@@ -37,7 +37,6 @@ namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
 
         public override string ToString() => Value;
 
-        public static implicit operator Email(string value) => new(value);
         public static implicit operator string(Email email) => email.Value;
     }
 }
