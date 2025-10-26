@@ -18,6 +18,7 @@ namespace Api.GRRInnovations.Memorix.Application.Wrappers.In
 
         [JsonPropertyName("password")]
         [MaxLength(150)]
+        [MinLength(8)]
         public required string Password
         {
             get => Data.PasswordHash;

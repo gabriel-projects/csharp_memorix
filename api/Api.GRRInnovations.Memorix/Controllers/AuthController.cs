@@ -4,6 +4,7 @@ using Api.GRRInnovations.Memorix.Application.Wrappers.Out;
 using Api.GRRInnovations.Memorix.Domain.Entities;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
 using Api.GRRInnovations.Memorix.Domain.Models;
+using Api.GRRInnovations.Memorix.Filters;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,16 +25,18 @@ namespace Api.GRRInnovations.Memorix.Controllers
         public async Task<IActionResult> Register([FromBody] WrapperInRegister<User> wrapperInRegister)
         {
             var wrapperModel = await wrapperInRegister.Result();
+            if (wrapperModel == null)
+                return BadRequest(Result<string>.Fail("Invalid input data."));
 
             var user = await _authService.RegisterAsync(wrapperModel);
 
-            var response = await WrapperOutUser.From(user).ConfigureAwait(false);
+            var response = await WrapperOutUser.From(user);
 
             return Ok(Result<WrapperOutUser>.Ok(response));
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login()
         {
             // Login logic here
             return Ok();

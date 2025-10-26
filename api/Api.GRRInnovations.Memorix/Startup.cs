@@ -1,7 +1,9 @@
 ﻿using Api.GRRInnovations.Memorix.Application;
+using Api.GRRInnovations.Memorix.Filters;
 using Api.GRRInnovations.Memorix.Infrastructure;
 using Api.GRRInnovations.Memorix.Infrastructure.Helpers;
 using Api.GRRInnovations.Memorix.Middlewares;
+using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
 
 namespace Api.GRRInnovations.Memorix
@@ -22,6 +24,16 @@ namespace Api.GRRInnovations.Memorix
 
             services.AddApplicationServices();
             services.AddInfrastructureServices(Configuration);
+
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<ValidateModelAttribute>();
+            });
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             ConfigureSwagger(services);
         }

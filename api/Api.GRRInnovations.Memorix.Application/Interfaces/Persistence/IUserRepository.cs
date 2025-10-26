@@ -1,4 +1,5 @@
 ﻿using Api.GRRInnovations.Memorix.Domain.Interfaces;
+using Api.GRRInnovations.Memorix.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace Api.GRRInnovations.Memorix.Application.Interfaces.Persistence
 
         Task<IUser> GetUserAsync(IUser user);
 
-        Task<bool> ExistsByEmailAsync(string email);
+        Task<bool> ExistsByEmailAsync(Email email);
     }
 }

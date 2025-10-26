@@ -27,11 +27,13 @@ namespace Api.GRRInnovations.Memorix.Application.Services
         public async Task<IUser> RegisterAsync(IUser user)
         {
             if (await _userRepository.ExistsByEmailAsync(user.Email))
-                throw new DomainException("E-mail já cadastrado.");
+                throw new DomainException("Email address is already registered.");
 
             user.PasswordHash = _cryptoService.HashPassword(user.PasswordHash);
 
-            return await _userRepository.CreateUserAsync(user);
+            await _userRepository.CreateUserAsync(user);
+
+            return user;
         }
 
         private Task<bool> CorrectPassword(string localPassword, string remotePassword)
