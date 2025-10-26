@@ -21,5 +21,10 @@ namespace Api.GRRInnovations.Memorix.Application.Services
         {
             throw new NotImplementedException();
         }
+
+        public Task<IUser> GetUserByUidAsync(Guid uid)
+        {
+            return _userRepository.GetUserAsync(uid);
+        }
     }
 }

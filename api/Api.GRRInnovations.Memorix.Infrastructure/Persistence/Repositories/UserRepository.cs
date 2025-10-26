@@ -37,9 +37,11 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
                 .AnyAsync(u => u.Email == email.Value.ToLowerInvariant().Trim());
         }
 
-        public Task<IUser> GetUserAsync(IUser user)
+        public async Task<IUser> GetUserAsync(Guid uid)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Uid == uid);
         }
 
         public async Task<List<IUser>> GetUsersAsync(UserOptions userOptions)
