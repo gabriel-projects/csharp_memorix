@@ -12,21 +12,20 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Security.Authentication
 {
     public static class JwtClaimHelper
     {
-        public const string ClaimUserUid = "user_uid";
-        private const string ClaimEmail = "email";
-
         public static List<Claim> GenerateClaims(IUser model)
         {
             var claims = new List<Claim>();
 
-            if (model == null) return claims;
+            if (model is null)
+                return claims;
+
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, model.Uid.ToString()));
 
             if (!string.IsNullOrWhiteSpace(model.Email))
-            {
-                claims.Add(new Claim(ClaimEmail, model.Email));
-            }
+                claims.Add(new Claim(ClaimTypes.Email, model.Email));
 
-            claims.Add(new Claim(ClaimUserUid, model.Uid.ToString()));
+            if (!string.IsNullOrWhiteSpace(model.Name))
+                claims.Add(new Claim(ClaimTypes.Name, model.Name));
 
             return claims;
         }
@@ -36,7 +35,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Security.Authentication
             if (claims == null || claims.Count == 0)
                 return null;
 
-            var userUidClaim = claims.FirstOrDefault(c => c.Type == ClaimUserUid)?.Value;
+            var userUidClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var emailClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
             if (string.IsNullOrEmpty(userUidClaim))

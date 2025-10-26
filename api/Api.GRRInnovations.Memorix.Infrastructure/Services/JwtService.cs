@@ -29,20 +29,22 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Services
 
             var jwtData = new JwtModel(user);
 
-            if (jwtData.NotBefore == null) jwtData.NotBefore = DateTime.Now;
+            if (jwtData.NotBefore == null) jwtData.NotBefore = DateTime.UtcNow;
             jwtData.ExpireAt = jwtData.NotBefore + expireDiff;
-
 
             var jwtKey = Encoding.UTF8.GetBytes(_jwtSettings.Secret);
             var securityKey = new SymmetricSecurityKey(jwtKey);
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+
             var claims = JwtClaimHelper.GenerateClaims(user);
             var identity = new ClaimsIdentity(claims, "OAuth");
+
             var handler = new JwtSecurityTokenHandler();
             var securityToken = handler.CreateToken(new SecurityTokenDescriptor
             {
                 Issuer = _jwtSettings.Issuer,
                 Audience = _jwtSettings.Audience,
-                SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature),
+                SigningCredentials = credentials,
                 IssuedAt = jwtData.NotBefore,
                 Subject = identity,
                 NotBefore = jwtData.NotBefore,
@@ -54,9 +56,9 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Services
             var result = new JwtResultModel
             {
                 AccessToken = token,
-                Expire = jwtData.ExpireAt.Value.ToOADate(),
+                Expire = new DateTimeOffset(jwtData.ExpireAt.Value).ToUnixTimeSeconds(),
                 Type = "Bearer"
-            };
+            }; ;
 
             return result;
         }

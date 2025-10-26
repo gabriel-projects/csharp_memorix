@@ -37,19 +37,21 @@ namespace Api.GRRInnovations.Memorix.Application.Services
             return user;
         }
 
-        public async Task<IUser> ValidateAsync(IUser user)
+        public async Task<IUser> ValidateAsync(string login, string password)
         {
             var options = UserOptions.Create()
-                .WithFilterLogins(new List<string> { user.Email })
+                .WithFilterLogins(new List<string> { login })
                 .Build();
 
             var users = await _userRepository.GetUsersAsync(options);
 
             var remoteUser = users.FirstOrDefault();
-            if (remoteUser != null && !await CorrectPassword(user.PasswordHash, remoteUser.PasswordHash))
+            if (remoteUser != null && !await CorrectPassword(password, remoteUser.PasswordHash))
             {
                 remoteUser = null;
             }
+
+            //todo: validate user active or blocked
 
             return remoteUser;
         }

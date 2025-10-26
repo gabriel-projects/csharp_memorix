@@ -1,10 +1,9 @@
 ﻿using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
-using Api.GRRInnovations.Memorix.Application.Services;
 using Api.GRRInnovations.Memorix.Application.Wrappers.In;
 using Api.GRRInnovations.Memorix.Application.Wrappers.Out;
 using Api.GRRInnovations.Memorix.Domain.Entities;
 using Api.GRRInnovations.Memorix.Domain.Models;
-using Api.GRRInnovations.Memorix.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.GRRInnovations.Memorix.Controllers
@@ -23,6 +22,7 @@ namespace Api.GRRInnovations.Memorix.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] WrapperInRegister<User> wrapperInRegister)
         {
             var wrapperModel = await wrapperInRegister.Result();
@@ -37,18 +37,15 @@ namespace Api.GRRInnovations.Memorix.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] WrapperInLogin<User> wrapperInLogin)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] WrapperInLogin wrapperInLogin)
         {
-            var wrapperModel = await wrapperInLogin.Result();
-            if (wrapperModel == null)
-                return BadRequest(Result<string>.Fail("Invalid input data."));
+            var user = await _authService.ValidateAsync(wrapperInLogin.Email, wrapperInLogin.Password);
+            if (user == null) return Unauthorized(Result<string>.Fail("Invalid credentials."));
 
-            var remoteUser = await _authService.ValidateAsync(wrapperModel);
-            if (remoteUser == null) return new UnauthorizedResult();
+            var jwt = _jwtService.GenerateToken(user);
 
-            var userToken = _jwtService.GenerateToken(remoteUser);
-
-            var response = await WrapperOutJwtResult.From(userToken).ConfigureAwait(false);
+            var response = await WrapperOutJwtResult.From(jwt).ConfigureAwait(false);
             return new OkObjectResult(Result<WrapperOutJwtResult>.Ok(response));
         }
     }
