@@ -1,6 +1,7 @@
 ﻿using Api.GRRInnovations.Memorix.Application.Interfaces.Persistence;
 using Api.GRRInnovations.Memorix.Domain.Entities;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,13 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
             await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return model;
+        }
+
+        public async Task<bool> ExistsByEmailAsync(string email)
+        {
+            return await _dbContext.Users
+                .AsNoTracking()
+                .AnyAsync(u => u.Email == email.ToLowerInvariant().Trim());
         }
 
         public Task<IUser> GetUserAsync(IUser user)

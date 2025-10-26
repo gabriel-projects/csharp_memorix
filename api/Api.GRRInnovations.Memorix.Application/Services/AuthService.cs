@@ -2,6 +2,7 @@
 using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
 using Api.GRRInnovations.Memorix.Application.Wrappers.In;
 using Api.GRRInnovations.Memorix.Domain.Entities;
+using Api.GRRInnovations.Memorix.Domain.Exceptions;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -23,20 +24,14 @@ namespace Api.GRRInnovations.Memorix.Application.Services
             _cryptoService = cryptoService;
         }
 
-        public async Task<IUser> RegisterAsync(WrapperInRegister wrapperInRegister)
+        public async Task<IUser> RegisterAsync(IUser user)
         {
-            User userModel = new User
-            {
-                PasswordHash = wrapperInRegister.Password,
-                Email = wrapperInRegister.Email,
-                Name = wrapperInRegister.Name
-            };
+            if (await _userRepository.ExistsByEmailAsync(user.Email))
+                throw new DomainException("E-mail já cadastrado.");
 
-            var user = _userRepository
+            user.PasswordHash = _cryptoService.HashPassword(user.PasswordHash);
 
-            userModel.PasswordHash = _cryptoService.HashPassword(userModel.PasswordHash);
-
-            return await _userRepository.CreateUserAsync(userModel);
+            return await _userRepository.CreateUserAsync(user);
         }
 
         private Task<bool> CorrectPassword(string localPassword, string remotePassword)

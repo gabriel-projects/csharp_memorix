@@ -1,6 +1,7 @@
 ﻿using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
 using Api.GRRInnovations.Memorix.Application.Wrappers.In;
 using Api.GRRInnovations.Memorix.Application.Wrappers.Out;
+using Api.GRRInnovations.Memorix.Domain.Entities;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
 using Api.GRRInnovations.Memorix.Domain.Models;
 using Microsoft.AspNetCore.Identity.Data;
@@ -20,9 +21,11 @@ namespace Api.GRRInnovations.Memorix.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] WrapperInRegister wrapperInRegister)
+        public async Task<IActionResult> Register([FromBody] WrapperInRegister<User> wrapperInRegister)
         {
-            var user = await _authService.RegisterAsync(wrapperInRegister);
+            var wrapperModel = await wrapperInRegister.Result();
+
+            var user = await _authService.RegisterAsync(wrapperModel);
 
             var response = await WrapperOutUser.From(user).ConfigureAwait(false);
 
