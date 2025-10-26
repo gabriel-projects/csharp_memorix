@@ -16,17 +16,18 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence
         public ApplicationDbContext CreateDbContext(string[] args)
         {
             var config = new ConfigurationBuilder()
-               .SetBasePath(Directory.GetCurrentDirectory())
-               .AddJsonFile($"appsettings.json", true)
-               .AddEnvironmentVariables()
-               .Build();
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
 
             var connectionString = config.GetConnectionString("SqlConnectionString");
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-            var connection = string.IsNullOrEmpty(databaseUrl) ? connectionString : ConnectionHelper.BuildConnectionString(databaseUrl);
+            Console.WriteLine($"Connection from config: {connectionString}");
+            Console.WriteLine($"DATABASE_URL: {databaseUrl}");
 
-            Debug.WriteLine(connectionString);
+            var connection = string.IsNullOrEmpty(databaseUrl) ? connectionString : ConnectionHelper.BuildConnectionString(databaseUrl);
 
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             optionsBuilder.UseNpgsql(connection);

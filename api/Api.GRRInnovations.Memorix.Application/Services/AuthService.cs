@@ -32,6 +32,8 @@ namespace Api.GRRInnovations.Memorix.Application.Services
                 Name = wrapperInRegister.Name
             };
 
+            var user = _userRepository
+
             userModel.PasswordHash = _cryptoService.HashPassword(userModel.PasswordHash);
 
             return await _userRepository.CreateUserAsync(userModel);

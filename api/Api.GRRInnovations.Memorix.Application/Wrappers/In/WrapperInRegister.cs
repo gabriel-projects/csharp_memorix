@@ -6,15 +6,16 @@ namespace Api.GRRInnovations.Memorix.Application.Wrappers.In
     public class WrapperInRegister
     {
         [JsonPropertyName("login")]
-        [MaxLength(50)]
+        [MaxLength(150)]
+        //[EmailAddress]
         public required string Email { get; set; }
 
         [JsonPropertyName("password")]
-        [MaxLength(30)]
+        [MaxLength(150)]
         public required string Password { get; set; }
 
-        [JsonPropertyName("Name")]
-        [MaxLength(100)]
+        [JsonPropertyName("name")]
+        [MaxLength(150)]
         public required string Name { get; set; }
     }
 }

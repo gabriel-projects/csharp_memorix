@@ -27,5 +27,10 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 
             return model;
         }
+
+        public Task<IUser> GetUserAsync(IUser user)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

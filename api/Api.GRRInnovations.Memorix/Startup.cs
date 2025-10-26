@@ -1,6 +1,7 @@
 ﻿using Api.GRRInnovations.Memorix.Application;
 using Api.GRRInnovations.Memorix.Infrastructure;
 using Api.GRRInnovations.Memorix.Infrastructure.Helpers;
+using Api.GRRInnovations.Memorix.Middlewares;
 using Scalar.AspNetCore;
 
 namespace Api.GRRInnovations.Memorix
@@ -50,6 +51,8 @@ namespace Api.GRRInnovations.Memorix
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

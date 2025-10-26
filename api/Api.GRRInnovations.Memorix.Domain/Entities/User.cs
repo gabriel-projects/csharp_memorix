@@ -1,7 +1,9 @@
 ﻿using Api.GRRInnovations.Memorix.Domain.Common;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
+using Api.GRRInnovations.Memorix.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,9 +12,11 @@ namespace Api.GRRInnovations.Memorix.Domain.Entities
 {
     public class User : BaseModel, IUser
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string PasswordHash { get; set; }
+        public string Name { get; set; } = string.Empty;
+
+        public Email Email { get; set; } = new("placeholder@email.com");
+
+        public string PasswordHash { get; set; } = string.Empty;
 
         public List<Deck>? DbDecks { get; set; }
 

@@ -2,6 +2,7 @@
 using Api.GRRInnovations.Memorix.Application.Wrappers.In;
 using Api.GRRInnovations.Memorix.Application.Wrappers.Out;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
+using Api.GRRInnovations.Memorix.Domain.Models;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,8 @@ namespace Api.GRRInnovations.Memorix.Controllers
             var user = await _authService.RegisterAsync(wrapperInRegister);
 
             var response = await WrapperOutUser.From(user).ConfigureAwait(false);
-            return new OkObjectResult(response);
+
+            return Ok(Result<WrapperOutUser>.Ok(response));
         }
 
         [HttpPost("login")]

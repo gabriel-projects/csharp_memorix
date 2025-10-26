@@ -10,5 +10,7 @@ namespace Api.GRRInnovations.Memorix.Application.Interfaces.Persistence
     public interface IUserRepository
     {
         Task<IUser> CreateUserAsync(IUser user);
+
+        Task<IUser> GetUserAsync(IUser user);
     }
 }

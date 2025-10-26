@@ -1,5 +1,7 @@
 ﻿using Api.GRRInnovations.Memorix.Domain.Common;
 using Api.GRRInnovations.Memorix.Domain.Entities;
+using Api.GRRInnovations.Memorix.Domain.ValueObjects;
+using Api.GRRInnovations.Memorix.Infrastructure.Persistence.ValueGenerators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 using System;
@@ -35,6 +37,16 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence
             DefaultModelSetup<User>(modelBuilder);
             modelBuilder.Entity<User>().Ignore(x => x.Decks);
             modelBuilder.Entity<User>().HasIndex(x => x.Email).IsUnique();
+            modelBuilder.Entity<User>().Property(u => u.Email)
+                .HasConversion(
+                    email => email.Value,
+                    value => new Email(value)
+                )
+                .HasMaxLength(150)
+                .IsRequired();
+
+            modelBuilder.Entity<User>().Property(x => x.PasswordHash).HasMaxLength(150).IsRequired();
+            modelBuilder.Entity<User>().Property(x => x.Name).HasMaxLength(150).IsRequired();
         }
 
         public override int SaveChanges()
@@ -104,7 +116,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence
             modelBuilder.Entity<T>().Property(m => m.UpdatedAt).IsRequired();
 
             modelBuilder.Entity<T>().HasKey(m => m.Uid);
-            modelBuilder.Entity<T>().Property((m) => m.Uid).IsRequired().HasValueGenerator<GuidValueGenerator>();
+            modelBuilder.Entity<T>().Property((m) => m.Uid).IsRequired().HasValueGenerator<GuidV7ValueGenerator>();
         }
     }
 }
