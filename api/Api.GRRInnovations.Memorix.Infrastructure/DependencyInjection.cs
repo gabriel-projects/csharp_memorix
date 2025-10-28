@@ -1,8 +1,10 @@
-﻿using Api.GRRInnovations.Memorix.Application.Interfaces.Persistence;
+﻿using Api.GRRInnovations.Memorix.Application.Interfaces;
+using Api.GRRInnovations.Memorix.Application.Interfaces.Persistence;
 using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
 using Api.GRRInnovations.Memorix.Infrastructure.Helpers;
 using Api.GRRInnovations.Memorix.Infrastructure.Persistence;
 using Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories;
+using Api.GRRInnovations.Memorix.Infrastructure.Security;
 using Api.GRRInnovations.Memorix.Infrastructure.Security.Crypto;
 using Api.GRRInnovations.Memorix.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -26,11 +28,14 @@ namespace Api.GRRInnovations.Memorix.Infrastructure
             services.AddScoped<ICryptoService, CryptoService>();
             services.AddScoped<IJwtService, JwtService>();
 
-            //services.AddDbContext<ApplicationDbContext>(opt => opt.UseInMemoryDatabase("MemorixDb"));
+            
+            services.AddScoped<IUserContext, UserContext>();
+
+            services.AddDbContext<ApplicationDbContext>(opt => opt.UseInMemoryDatabase("MemorixDb"));
 
             //todo: if not using in-memory database, use this code to connect to real database
             //todo: it is not yet possible to test this because the database is not yet created
-            AddDbContext(services, configuration);
+            //AddDbContext(services, configuration);
         }
 
         private static void AddDbContext(IServiceCollection services, IConfiguration configuration)

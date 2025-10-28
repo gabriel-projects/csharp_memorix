@@ -56,16 +56,15 @@ namespace Api.GRRInnovations.Memorix.Application.Services
             return remoteUser;
         }
 
-        private Task<bool> CorrectPassword(string localPassword, string remotePassword)
+        private Task<bool> CorrectPassword(string inputPassword, string storedHash)
         {
-            if (remotePassword == null) return Task.FromResult(false);
+            if (storedHash == null || inputPassword == null) return Task.FromResult(false);
 
-            var passwordV1 = _cryptoService.HashPassword(remotePassword);
+            bool isPasswordValid = _cryptoService.VerifyPassword(inputPassword, storedHash);
+            if (!isPasswordValid)
+                return Task.FromResult(false);
 
-            if (localPassword == passwordV1) return Task.FromResult(true);
-            if (!_cryptoService.VerifyPassword(passwordV1, localPassword)) return Task.FromResult(true);
-
-            return Task.FromResult(false);
+            return Task.FromResult(true);
         }
     }
 }

@@ -27,6 +27,8 @@ namespace Api.GRRInnovations.Memorix
             services.AddControllers();
             services.AddAuthorization();
 
+            services.AddHttpContextAccessor();
+
             services.AddApplicationServices();
             services.AddInfrastructureServices(Configuration);
 
