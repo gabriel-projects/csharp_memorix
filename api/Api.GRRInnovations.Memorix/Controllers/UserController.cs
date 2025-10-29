@@ -29,10 +29,9 @@ namespace Api.GRRInnovations.Memorix.Controllers
         [Authorize]
         public async Task<IActionResult> GetProfile()
         {
-            if (!_userContext.IsAuthenticated || _userContext.UserId is null)
-                return Unauthorized(Result<string>.Fail("User not authenticated."));
+            var userId = _userContext.RequireUserId();
 
-            var user = await _userService.GetUserByUidAsync(_userContext.UserId.Value);
+            var user = await _userService.GetUserByUidAsync(userId);
             if (user == null)
                 return NotFound(Result<string>.Fail("User not found."));
 

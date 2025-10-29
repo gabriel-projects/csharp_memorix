@@ -55,8 +55,8 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 
             if (options.FilterLogins.Any()) query = query.Where(p => options.FilterLogins.Contains(p.Email));
             if (options.FilterUsers.Any()) query = query.Where(p => options.FilterUsers.Contains(p.Uid));
-            if (options.IncludeUserDecks) query = query.Include(p => p.DbDecks);
-            if (options.IncludeUserCards) query = query.Include(p => p.DbDecks).ThenInclude(p => p.DbCards);
+            if (options.IncludeDecks) query = query.Include(p => p.DbDecks);
+            if (options.IncludeCards) query = query.Include(p => p.DbDecks).ThenInclude(p => p.DbCards);
 
             return query;
         }

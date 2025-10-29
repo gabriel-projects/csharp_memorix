@@ -12,4 +12,7 @@
     <ProjectReference Include="..\Api.GRRInnovations.Memorix.Domain\Api.GRRInnovations.Memorix.Domain.csproj" />
     <ProjectReference Include="..\Api.GRRInnovations.Memorix.Shared\Api.GRRInnovations.Memorix.Shared.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
 </Project>

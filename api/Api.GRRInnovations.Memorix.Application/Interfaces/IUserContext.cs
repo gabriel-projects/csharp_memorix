@@ -6,5 +6,7 @@
         string? Email { get; }
         string? Name { get; }
         bool IsAuthenticated { get; }
+
+        Guid RequireUserId();
     }
 }

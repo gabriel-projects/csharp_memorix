@@ -6,6 +6,7 @@ using Api.GRRInnovations.Memorix.Infrastructure.Helpers;
 using Api.GRRInnovations.Memorix.Middlewares;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
@@ -47,6 +48,13 @@ namespace Api.GRRInnovations.Memorix
 
             var jwtSettings = new JwtSettings();
             jwtSection.Bind(jwtSettings);
+
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });
 
 
             services.AddAuthentication(options =>

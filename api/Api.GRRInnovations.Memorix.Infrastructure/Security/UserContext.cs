@@ -30,5 +30,14 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Security
         public string? Email => _accessor.HttpContext?.User?.FindFirst(ClaimTypes.Email)?.Value;
         public string? Name => _accessor.HttpContext?.User?.Identity?.Name;
         public bool IsAuthenticated => _accessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
+
+        public Guid RequireUserId()
+        {
+            if (!IsAuthenticated || UserId is null)
+                throw new UnauthorizedAccessException("User not authenticated.");
+
+            return UserId.Value;
+
+        }
     }
 }

@@ -1,6 +1,8 @@
-﻿using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
+﻿using Api.GRRInnovations.Memorix.Application.Interfaces;
+using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
 using Api.GRRInnovations.Memorix.Application.Wrappers.In;
 using Api.GRRInnovations.Memorix.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.GRRInnovations.Memorix.Controllers
@@ -10,16 +12,19 @@ namespace Api.GRRInnovations.Memorix.Controllers
     public class DeckController : ControllerBase
     {
         private readonly IDeckService _deckService;
+        private readonly IUserContext _userContext;
 
-        public DeckController(IDeckService deckService)
+        public DeckController(IDeckService deckService, IUserContext userContext)
         {
             _deckService = deckService;
+            _userContext = userContext;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("id/{deckId}")]
+        [Authorize]
+        public async Task<IActionResult> Get(Guid deckId)
         {
-            //todo: add jwt auth
+            var userId = _userContext.RequireUserId();
 
             var decks = await _deckService.GetDecksAsync();
             return Ok(decks);
