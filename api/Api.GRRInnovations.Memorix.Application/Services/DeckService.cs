@@ -1,6 +1,7 @@
 ﻿using Api.GRRInnovations.Memorix.Application.Interfaces.Persistence;
 using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
+using Api.GRRInnovations.Memorix.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,9 @@ namespace Api.GRRInnovations.Memorix.Application.Services
             return _deckRepository.AddDeckAsync(deckModel, inUser);
         }
 
-        public async Task<IEnumerable<IDeck>> GetDecksAsync()
+        public async Task<IEnumerable<IDeck>> GetDecksAsync(DeckOptions options)
         {
-            return await _deckRepository.GetDecksAsync();
+            return await _deckRepository.GetDecksAsync(options);
         }
     }
 }

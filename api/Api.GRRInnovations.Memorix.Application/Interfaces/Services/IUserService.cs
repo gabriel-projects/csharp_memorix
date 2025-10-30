@@ -1,4 +1,5 @@
 ﻿using Api.GRRInnovations.Memorix.Domain.Interfaces;
+using Api.GRRInnovations.Memorix.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,6 @@ namespace Api.GRRInnovations.Memorix.Application.Interfaces.Services
     {
         Task<IUser> CreateUserAsync(IUser userModel);
 
-        Task<IUser> GetUserByUidAsync(Guid uid);
+        Task<IUser> GetUserByUidAsync(Guid uid, UserOptions? userOptions = null);
     }
 }

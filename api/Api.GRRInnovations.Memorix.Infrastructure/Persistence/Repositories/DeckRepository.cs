@@ -2,6 +2,7 @@
 using Api.GRRInnovations.Memorix.Domain.Common;
 using Api.GRRInnovations.Memorix.Domain.Entities;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
+using Api.GRRInnovations.Memorix.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,11 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 {
     public class DeckRepository : IDeckRepository
     {
-        private readonly ApplicationDbContext Context;
+        private readonly ApplicationDbContext _dbContext;
 
         public DeckRepository(ApplicationDbContext context)
         {
-            Context = context;
+            _dbContext = context;
         }
 
         public async Task<IDeck> AddDeckAsync(IDeck deckModel, IUser inUser)
@@ -25,17 +26,33 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
             if (deckModel is not Deck deckM) return null;
             if (inUser is not User userM) return null;
 
-            deckM.User = userM;
+            deckM.UserUid = userM.Uid;
 
-            await Context.Decks.AddAsync(deckM).ConfigureAwait(false);
-            await Context.SaveChangesAsync().ConfigureAwait(false);
+            await _dbContext.Decks.AddAsync(deckM).ConfigureAwait(false);
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return deckM;
         }
 
-        public async Task<IEnumerable<IDeck>> GetDecksAsync()
+        public async Task<List<IDeck>> GetDecksAsync(DeckOptions options)
         {
-            return await Context.Decks.ToListAsync();
+            return await Query(options).ToListAsync<IDeck>();
+        }
+
+        private IQueryable<Deck> Query(DeckOptions options)
+        {
+            var query = _dbContext.Decks.AsQueryable();
+
+            if (options.FilterIds.Any())
+                query = query.Where(p => options.FilterIds.Contains(p.Uid));
+
+            if (options.FilterUsersId.Any())
+                query = query.Where(p => options.FilterUsersId.Contains(p.UserUid));
+
+            if (options.IncludeCards)
+                query = query.Include(p => p.DbCards);
+
+            return query;
         }
     }
 }

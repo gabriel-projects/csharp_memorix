@@ -12,7 +12,7 @@ namespace Api.GRRInnovations.Memorix.Application.Interfaces.Persistence
     {
         Task<IUser> CreateUserAsync(IUser user);
 
-        Task<IUser> GetUserAsync(Guid uid);
+        Task<IUser> GetUserAsync(Guid uid, UserOptions? userOptions = null);
 
         Task<List<IUser>> GetUsersAsync(UserOptions userOptions);
 

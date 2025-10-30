@@ -1,13 +1,10 @@
 ﻿using Api.GRRInnovations.Memorix.Application.Interfaces;
 using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
-using Api.GRRInnovations.Memorix.Application.Services;
 using Api.GRRInnovations.Memorix.Application.Wrappers.Out;
-using Api.GRRInnovations.Memorix.Domain.Entities;
 using Api.GRRInnovations.Memorix.Domain.Models;
-using Api.GRRInnovations.Memorix.Infrastructure.Security;
+using Api.GRRInnovations.Memorix.Domain.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Api.GRRInnovations.Memorix.Controllers
 {
@@ -37,6 +34,24 @@ namespace Api.GRRInnovations.Memorix.Controllers
 
             var response = await WrapperOutUser.From(user);
             return Ok(Result<WrapperOutUser>.Ok(response));
+        }
+
+        [HttpGet("full")]
+        [Authorize]
+        public async Task<IActionResult> Full()
+        {
+            var userId = _userContext.RequireUserId();
+
+            var options = UserOptions.Create()
+                .IncludeDecks()
+                .Build();
+
+            var user = await _userService.GetUserByUidAsync(userId, options);
+            if (user == null)
+                return NotFound(Result<string>.Fail("User not found."));
+
+            var response = await WrapperOutUserFull.From(user);
+            return Ok(Result<WrapperOutUserFull>.Ok(response));
         }
     }
 }

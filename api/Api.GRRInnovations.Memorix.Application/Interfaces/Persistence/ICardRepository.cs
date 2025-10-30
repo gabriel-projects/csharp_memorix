@@ -1,4 +1,6 @@
 ﻿using Api.GRRInnovations.Memorix.Domain.Entities;
+using Api.GRRInnovations.Memorix.Domain.Interfaces;
+using Api.GRRInnovations.Memorix.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +11,8 @@ namespace Api.GRRInnovations.Memorix.Application.Interfaces.Persistence
 {
     public interface ICardRepository 
     {
-        Task<List<Card>> GetAllAsync();
-
-        Task<Card?> GetByUidAsync(Guid uid);
-
-        Task<Card> CreateAsync(Card card);
-
-        Task<Card> UpdateAsync(Card card);
-
-        Task<bool> DeleteAsync(Guid uid);
+        Task<ICard> AddCardAsync(ICard cardModel, IDeck inDeck);
+        Task<ICard> GetCardAsync(Guid uid, CardOptions options);
+        Task<IEnumerable<ICard>> GetCardsAsync(CardOptions options);
     }
 }

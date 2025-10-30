@@ -37,11 +37,11 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
                 .AnyAsync(u => u.Email == email.Value.ToLowerInvariant().Trim());
         }
 
-        public async Task<IUser> GetUserAsync(Guid uid)
+        public async Task<IUser> GetUserAsync(Guid uid, UserOptions? userOptions = null)
         {
-            return await _dbContext.Users
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Uid == uid);
+            return await Query(userOptions)
+                   .AsNoTracking()
+                   .FirstOrDefaultAsync(u => u.Uid == uid);
         }
 
         public async Task<List<IUser>> GetUsersAsync(UserOptions userOptions)
@@ -53,10 +53,20 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
         {
             var query = _dbContext.Users.AsQueryable();
 
-            if (options.FilterLogins.Any()) query = query.Where(p => options.FilterLogins.Contains(p.Email));
-            if (options.FilterUsers.Any()) query = query.Where(p => options.FilterUsers.Contains(p.Uid));
-            if (options.IncludeDecks) query = query.Include(p => p.DbDecks);
-            if (options.IncludeCards) query = query.Include(p => p.DbDecks).ThenInclude(p => p.DbCards);
+            if (options == null)
+                return query;
+
+            if (options.FilterLogins.Any())
+                query = query.Where(p => options.FilterLogins.Contains(p.Email));
+
+            if (options.FilterIds.Any())
+                query = query.Where(p => options.FilterIds.Contains(p.Uid));
+
+            if (options.IncludeDecks)
+                query = query.Include(p => p.DbDecks);
+
+            if (options.IncludeCards)
+                query = query.Include(p => p.DbDecks).ThenInclude(p => p.DbCards);
 
             return query;
         }

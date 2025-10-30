@@ -40,7 +40,7 @@ namespace Api.GRRInnovations.Memorix.Application.Services
         public async Task<IUser> ValidateAsync(string login, string password)
         {
             var options = UserOptions.Create()
-                .WithFilterLogins(new List<string> { login })
+                .WithFilterLogins<UserOptions.Builder>(new List<string> { login })
                 .Build();
 
             var users = await _userRepository.GetUsersAsync(options);
