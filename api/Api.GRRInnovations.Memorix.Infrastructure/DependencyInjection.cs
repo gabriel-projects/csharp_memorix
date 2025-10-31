@@ -1,20 +1,20 @@
 ﻿using Api.GRRInnovations.Memorix.Application.Interfaces;
 using Api.GRRInnovations.Memorix.Application.Interfaces.Persistence;
 using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
+using Api.GRRInnovations.Memorix.Domain.Models;
 using Api.GRRInnovations.Memorix.Infrastructure.Helpers;
 using Api.GRRInnovations.Memorix.Infrastructure.Persistence;
 using Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories;
 using Api.GRRInnovations.Memorix.Infrastructure.Security;
 using Api.GRRInnovations.Memorix.Infrastructure.Security.Crypto;
 using Api.GRRInnovations.Memorix.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Api.GRRInnovations.Memorix.Infrastructure
 {
@@ -36,6 +36,46 @@ namespace Api.GRRInnovations.Memorix.Infrastructure
             //todo: if not using in-memory database, use this code to connect to real database
             //todo: it is not yet possible to test this because the database is not yet created
             //AddDbContext(services, configuration);
+        }
+
+        public static IServiceCollection AddInfrastructureAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            var jwtSection = configuration.GetSection("JwtSettings");
+            services.Configure<JwtSettings>(jwtSection);
+
+            var jwtSettings = new JwtSettings();
+            jwtSection.Bind(jwtSettings);
+
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+
+            return services;
         }
 
         private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
