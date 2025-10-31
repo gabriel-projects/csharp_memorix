@@ -1,5 +1,5 @@
 ﻿using Api.GRRInnovations.Memorix.Domain.Exceptions;
-using Api.GRRInnovations.Memorix.Domain.Models;
+using Api.GRRInnovations.Memorix.Application.Wrappers;
 using System.Net;
 using System.Text.Json;
 

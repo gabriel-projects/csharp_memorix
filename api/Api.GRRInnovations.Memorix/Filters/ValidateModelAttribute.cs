@@ -1,4 +1,4 @@
-﻿using Api.GRRInnovations.Memorix.Domain.Models;
+﻿using Api.GRRInnovations.Memorix.Application.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 

@@ -1,7 +1,7 @@
 ﻿using Api.GRRInnovations.Memorix.Application.Interfaces;
 using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
 using Api.GRRInnovations.Memorix.Application.Wrappers.Out;
-using Api.GRRInnovations.Memorix.Domain.Models;
+using Api.GRRInnovations.Memorix.Application.Wrappers;
 using Api.GRRInnovations.Memorix.Domain.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

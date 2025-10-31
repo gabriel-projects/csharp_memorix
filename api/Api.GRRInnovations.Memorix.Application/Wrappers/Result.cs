@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Api.GRRInnovations.Memorix.Domain.Models
+namespace Api.GRRInnovations.Memorix.Application.Wrappers
 {
     public class Result<T>
     {
