@@ -14,10 +14,9 @@ namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
 
         private DeckOptions(
             IEnumerable<Guid>? filterIds,
-            IEnumerable<string>? filterLogins,
             IEnumerable<Guid>? filterUsersId,
             bool includeCards)
-            : base(filterIds, filterLogins)
+            : base(filterIds)
         {
             IncludeCards = includeCards;
             FilterUsersId = filterUsersId?.ToList() ?? [];
@@ -46,7 +45,6 @@ namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
             {
                 return new DeckOptions(
                     filterIds: _filterIds,
-                    filterLogins: _filterLogins,
                     includeCards: _includeCards,
                     filterUsersId: _filterUsersId);
             }

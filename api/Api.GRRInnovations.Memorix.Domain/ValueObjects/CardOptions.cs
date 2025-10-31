@@ -4,18 +4,17 @@ namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
 {
     public sealed class CardOptions : BaseQueryOptions<CardOptions, Card>
     {
-        public IReadOnlyList<Guid> FilterUsersId { get; }
+        public Guid FilterUserId { get; }
 
         public Guid FilterDeckId { get; init; }
 
         private CardOptions(
             IEnumerable<Guid>? filterIds,
-            IEnumerable<string>? filterLogins,
-            IEnumerable<Guid>? filterUsersId,
+            Guid filterUserId,
             Guid filterDeckId)
-            : base(filterIds, filterLogins)
+            : base(filterIds)
         {
-            FilterUsersId = filterUsersId?.ToList() ?? [];
+            FilterUserId = filterUserId;
             FilterDeckId = filterDeckId;
         }
 
@@ -23,7 +22,7 @@ namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
 
         public sealed class Builder : BuilderBase
         {
-            private List<Guid> _filterUsersId = [];
+            private Guid _filterUserId;
 
             private Guid _filterDeckId;
 
@@ -33,9 +32,9 @@ namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
                 return this;
             }
 
-            public Builder WithFilterUserId(IEnumerable<Guid> UsersIds)
+            public Builder WithFilterUserId(Guid userId)
             {
-                _filterUsersId = UsersIds?.ToList() ?? [];
+                _filterUserId = userId;
                 return this;
             }
 
@@ -43,8 +42,7 @@ namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
             {
                 return new CardOptions(
                     filterIds: _filterIds,
-                    filterLogins: _filterLogins,
-                    filterUsersId: _filterUsersId,
+                    filterUserId: _filterUserId,
                     filterDeckId: _filterDeckId);
             }
         }

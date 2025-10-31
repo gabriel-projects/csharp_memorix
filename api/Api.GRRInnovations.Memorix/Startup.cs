@@ -27,7 +27,6 @@ namespace Api.GRRInnovations.Memorix
         {
             services.AddControllers();
             services.AddAuthorization();
-
             services.AddHttpContextAccessor();
 
             services.AddApplicationServices();
@@ -93,14 +92,8 @@ namespace Api.GRRInnovations.Memorix
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // Configure the HTTP request pipeline.
-            if (env.IsDevelopment())
-            {
-            }
-
-            //todo: enable migration
-            //var scope = app.ApplicationServices.CreateScope();
-            //_ = MigrationHelper.ManageDataAsync(scope.ServiceProvider);
+            var scope = app.ApplicationServices.CreateScope();
+            _ = MigrationHelper.ManageDataAsync(scope.ServiceProvider);
 
             app.UseHttpsRedirection();
 

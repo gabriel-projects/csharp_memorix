@@ -43,7 +43,7 @@ namespace Api.GRRInnovations.Memorix.Controllers
             var userId = _userContext.RequireUserId();
 
             var options = UserOptions.Create()
-                .IncludeDecks()
+                .IncludeCards()
                 .Build();
 
             var user = await _userService.GetUserByUidAsync(userId, options);

@@ -56,6 +56,9 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
             if (options.FilterDeckId != Guid.Empty)
                 query = query.Where(p => p.DeckUid == options.FilterDeckId);
 
+            if (options.FilterUserId != Guid.Empty)
+                query = query.Where(p => p.Deck.User.Uid == options.FilterUserId);
+
             return query;
         }
     }

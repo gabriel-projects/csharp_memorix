@@ -1,6 +1,5 @@
 ﻿using Api.GRRInnovations.Memorix.Application.Interfaces;
 using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
-using Api.GRRInnovations.Memorix.Application.Services;
 using Api.GRRInnovations.Memorix.Application.Wrappers.In;
 using Api.GRRInnovations.Memorix.Application.Wrappers.Out;
 using Api.GRRInnovations.Memorix.Domain.Entities;
@@ -33,7 +32,7 @@ namespace Api.GRRInnovations.Memorix.Controllers
             var userId = _userContext.RequireUserId();
 
             var options = CardOptions.Create()
-                .WithFilterUserId([userId])
+                .WithFilterUserId(userId)
                 .WithFilterIds<CardOptions.Builder>([cardId])
                 .Build();
 

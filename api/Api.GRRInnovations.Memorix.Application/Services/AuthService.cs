@@ -1,15 +1,8 @@
 ﻿using Api.GRRInnovations.Memorix.Application.Interfaces.Persistence;
 using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
-using Api.GRRInnovations.Memorix.Application.Wrappers.In;
-using Api.GRRInnovations.Memorix.Domain.Entities;
 using Api.GRRInnovations.Memorix.Domain.Exceptions;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
 using Api.GRRInnovations.Memorix.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Api.GRRInnovations.Memorix.Application.Services
 {
@@ -40,7 +33,7 @@ namespace Api.GRRInnovations.Memorix.Application.Services
         public async Task<IUser> ValidateAsync(string login, string password)
         {
             var options = UserOptions.Create()
-                .WithFilterLogins<UserOptions.Builder>(new List<string> { login })
+                .WithFilterLogins(new List<string> { login })
                 .Build();
 
             var users = await _userRepository.GetUsersAsync(options);

@@ -1,9 +1,4 @@
 ﻿using Api.GRRInnovations.Memorix.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
 {
@@ -11,16 +6,18 @@ namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
     {
         public bool IncludeDecks { get; }
         public bool IncludeCards { get; }
+        public IReadOnlyList<string> FilterLogins { get; }
 
         private UserOptions(
-            IEnumerable<Guid>? filterUsers,
+            IEnumerable<Guid>? filterIds,
             IEnumerable<string>? filterLogins,
             bool includeDecks,
             bool includeCards)
-            : base(filterUsers, filterLogins)
+            : base(filterIds)
         {
             IncludeDecks = includeDecks;
             IncludeCards = includeCards;
+            FilterLogins = filterLogins?.ToList() ?? [];
         }
 
         public static Builder Create() => new Builder();
@@ -29,6 +26,7 @@ namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
         {
             private bool _includeDecks;
             private bool _includeCards;
+            private List<string>? _filterLogins;
 
             public Builder IncludeDecks(bool include = true)
             {
@@ -42,10 +40,16 @@ namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
                 return this;
             }
 
+            public Builder WithFilterLogins(IEnumerable<string> logins)
+            {
+                _filterLogins = logins?.ToList() ?? [];
+                return this;
+            }
+
             public UserOptions Build()
             {
                 return new UserOptions(
-                    filterUsers: _filterIds,
+                    filterIds: _filterIds,
                     filterLogins: _filterLogins,
                     includeDecks: _includeDecks,
                     includeCards: _includeCards);

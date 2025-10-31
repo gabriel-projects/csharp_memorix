@@ -8,7 +8,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Helpers
     {
         public static async Task ManageDataAsync(IServiceProvider svcProvider)
         {
-            Console.WriteLine("Aplicando migração");
+            Console.WriteLine("Applying migration");
 
             var dbContextSvc = svcProvider.GetRequiredService<ApplicationDbContext>();
 
