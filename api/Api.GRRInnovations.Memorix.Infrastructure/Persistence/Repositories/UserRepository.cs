@@ -25,7 +25,6 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
             if (user is not User model) return null;
 
             await _dbContext.Users.AddAsync(model).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return model;
         }

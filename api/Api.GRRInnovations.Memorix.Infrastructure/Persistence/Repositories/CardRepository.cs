@@ -29,7 +29,6 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
             cardM.DeckUid = deckM.Uid;
 
             await _dbContext.Cards.AddAsync(cardM).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return cardM;
         }
@@ -57,7 +56,12 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
                 query = query.Where(p => p.DeckUid == options.FilterDeckId);
 
             if (options.FilterUserId != Guid.Empty)
-                query = query.Where(p => p.DbDeck.DbUser.Uid == options.FilterUserId);
+            {
+                query = query
+                    .Include(c => c.DbDeck)
+                    .ThenInclude(d => d.DbUser)
+                    .Where(p => p.DbDeck.DbUser.Uid == options.FilterUserId);
+            }
 
             return query;
         }

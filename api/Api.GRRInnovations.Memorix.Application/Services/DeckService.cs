@@ -13,15 +13,19 @@ namespace Api.GRRInnovations.Memorix.Application.Services
     public class DeckService : IDeckService
     {
         private readonly IDeckRepository _deckRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DeckService(IDeckRepository deckRepository)
+        public DeckService(IDeckRepository deckRepository, IUnitOfWork unitOfWork)
         {
             _deckRepository = deckRepository;
+            _unitOfWork = unitOfWork;
         }
 
-        public Task<IDeck> AddDeckAsync(IDeck deckModel, IUser inUser)
+        public async Task<IDeck> AddDeckAsync(IDeck deckModel, IUser inUser)
         {
-            return _deckRepository.AddDeckAsync(deckModel, inUser);
+            var deck = await _deckRepository.AddDeckAsync(deckModel, inUser);
+            await _unitOfWork.SaveChangesAsync();
+            return deck;
         }
 
         public async Task<IEnumerable<IDeck>> GetDecksAsync(DeckOptions options)

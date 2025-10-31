@@ -29,7 +29,6 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
             deckM.UserUid = userM.Uid;
 
             await _dbContext.Decks.AddAsync(deckM).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return deckM;
         }

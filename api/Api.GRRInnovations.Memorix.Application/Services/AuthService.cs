@@ -10,12 +10,15 @@ namespace Api.GRRInnovations.Memorix.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ICryptoService _cryptoService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public AuthService(IUserRepository userRepository, 
-            ICryptoService cryptoService)
+            ICryptoService cryptoService,
+            IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
             _cryptoService = cryptoService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IUser> RegisterAsync(IUser user)
@@ -26,6 +29,7 @@ namespace Api.GRRInnovations.Memorix.Application.Services
             user.PasswordHash = _cryptoService.HashPassword(user.PasswordHash);
 
             await _userRepository.CreateUserAsync(user);
+            await _unitOfWork.SaveChangesAsync();
 
             return user;
         }
@@ -39,7 +43,7 @@ namespace Api.GRRInnovations.Memorix.Application.Services
             var users = await _userRepository.GetUsersAsync(options);
 
             var remoteUser = users.FirstOrDefault();
-            if (remoteUser != null && !await CorrectPassword(password, remoteUser.PasswordHash))
+            if (remoteUser != null && !CorrectPassword(password, remoteUser.PasswordHash))
             {
                 remoteUser = null;
             }
@@ -49,15 +53,12 @@ namespace Api.GRRInnovations.Memorix.Application.Services
             return remoteUser;
         }
 
-        private Task<bool> CorrectPassword(string inputPassword, string storedHash)
+        private bool CorrectPassword(string inputPassword, string storedHash)
         {
-            if (storedHash == null || inputPassword == null) return Task.FromResult(false);
+            if (string.IsNullOrEmpty(storedHash) || string.IsNullOrEmpty(inputPassword))
+                return false;
 
-            bool isPasswordValid = _cryptoService.VerifyPassword(inputPassword, storedHash);
-            if (!isPasswordValid)
-                return Task.FromResult(false);
-
-            return Task.FromResult(true);
+            return _cryptoService.VerifyPassword(inputPassword, storedHash);
         }
     }
 }

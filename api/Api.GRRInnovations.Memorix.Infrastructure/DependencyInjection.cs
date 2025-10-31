@@ -25,6 +25,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure
             services.AddScoped<ICardRepository, CardRepository>();
             services.AddScoped<IDeckRepository, DeckRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICryptoService, CryptoService>();
             services.AddScoped<IJwtService, JwtService>();
 
