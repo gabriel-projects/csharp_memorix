@@ -32,11 +32,14 @@ namespace Api.GRRInnovations.Memorix.Infrastructure
             
             services.AddScoped<IUserContext, UserContext>();
 
-            services.AddDbContext<ApplicationDbContext>(opt => opt.UseInMemoryDatabase("MemorixDb"));
-
-            //todo: if not using in-memory database, use this code to connect to real database
-            //todo: it is not yet possible to test this because the database is not yet created
-            //AddDbContext(services, configuration);
+            if (configuration.GetValue<bool>("UseInMemoryDatabase"))
+            {
+                services.AddDbContext<ApplicationDbContext>(opt => opt.UseInMemoryDatabase("MemorixDb"));
+            }
+            else
+            {
+                AddDbContext(services, configuration);
+            }
         }
 
         public static IServiceCollection AddInfrastructureAuthentication(this IServiceCollection services, IConfiguration configuration)
