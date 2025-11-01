@@ -2,6 +2,7 @@
 using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
 using Api.GRRInnovations.Memorix.Domain.ValueObjects;
+using System;
 
 namespace Api.GRRInnovations.Memorix.Application.Services
 {
@@ -23,9 +24,25 @@ namespace Api.GRRInnovations.Memorix.Application.Services
             return card;
         }
 
-        public async Task<ICard> GetCardAsync(Guid uid, CardOptions options)
+        //todo: teste get card for a different user
+        public async Task<ICard> GetCardForUserAsync(Guid cardId, CardOptions options)
         {
-            return await _cardRepository.GetCardAsync(uid, options);
+            var card = await _cardRepository.GetCardAsync(cardId, options);
+            
+            if (card == null)
+                return null;
+
+            var userId = options.FilterUserId;
+
+            if (card is Domain.Entities.Card cardEntity)
+            {
+                if (cardEntity.DbDeck.DbUser.Uid != userId)
+                {
+                    throw new UnauthorizedAccessException("You don't have permission to access this card.");
+                }
+            }
+
+            return card;
         }
 
         public async Task<IEnumerable<ICard>> GetCardsAsync(CardOptions options)

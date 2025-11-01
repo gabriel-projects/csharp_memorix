@@ -13,5 +13,6 @@ namespace Api.GRRInnovations.Memorix.Application.Interfaces.Services
     {
         Task<IDeck> AddDeckAsync(IDeck deckModel, IUser inUser);
         Task<IEnumerable<IDeck>> GetDecksAsync(DeckOptions options);
+        Task<IDeck> GetDeckForUserAsync(Guid deckId, DeckOptions options);
     }
 }

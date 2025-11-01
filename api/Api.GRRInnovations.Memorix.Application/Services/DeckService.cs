@@ -32,5 +32,23 @@ namespace Api.GRRInnovations.Memorix.Application.Services
         {
             return await _deckRepository.GetDecksAsync(options);
         }
+
+        public async Task<IDeck> GetDeckForUserAsync(Guid deckId, DeckOptions options)
+        {
+            var decks = await _deckRepository.GetDecksAsync(options);
+            var deck = decks?.FirstOrDefault();
+
+            if (deck == null)
+                return null;
+
+            var userId = options.FilterUsersId.FirstOrDefault();
+
+            if (deck is Domain.Entities.Deck deckEntity && deckEntity.UserUid != userId)
+            {
+                throw new UnauthorizedAccessException("You don't have permission to access this deck.");
+            }
+
+            return deck;
+        }
     }
 }

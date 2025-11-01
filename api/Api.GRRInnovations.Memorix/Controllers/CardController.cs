@@ -35,12 +35,12 @@ namespace Api.GRRInnovations.Memorix.Controllers
                 .WithFilterUserId(userId)
                 .WithFilterIds<CardOptions.Builder>([cardId])
                 .Build();
-
-            var card = await _cardService.GetCardAsync(cardId, options);
+            var card = await _cardService.GetCardForUserAsync(cardId, options);
+                
             if (card == null)
             {
                 return NotFound(Result<string>.Fail("Card not found."));
-            };
+            }
 
             var response = await WrapperOutCard.From(card);
             return Ok(Result<WrapperOutCard>.Ok(response));
@@ -57,8 +57,8 @@ namespace Api.GRRInnovations.Memorix.Controllers
                 .WithFilterIds<DeckOptions.Builder>([deckId])
                 .Build();
 
-            var decks = await _deckService.GetDecksAsync(deckOptions);
-            if (decks?.Any() == false)
+            var deck = await _deckService.GetDeckForUserAsync(deckId, deckOptions);
+            if (deck == null)
             {
                 return NotFound(Result<string>.Fail("Deck not found."));
             }
@@ -79,17 +79,20 @@ namespace Api.GRRInnovations.Memorix.Controllers
             var userId = _userContext.RequireUserId();
 
             var deckOptions = DeckOptions.Create()
-                 .WithFilterUserId([userId])
-                 .WithFilterIds<DeckOptions.Builder>([deckId])
-                 .Build();
-            var decks = await _deckService.GetDecksAsync(deckOptions);
-            if (decks?.Any() == false)
+                .WithFilterUserId([userId])
+                .WithFilterIds<DeckOptions.Builder>([deckId])
+                .Build();
+            var deck = await _deckService.GetDeckForUserAsync(deckId, deckOptions);
+            if (deck == null)
             {
                 return NotFound(Result<string>.Fail("Deck not found."));
             }
 
-            var deck = decks.First();
             var cardModel = await wrapperInCard.Result();
+            if (cardModel == null)
+            {
+                return BadRequest(Result<string>.Fail("Invalid card data."));
+            }
 
             var createdCard = await _cardService.AddCardAsync(cardModel, deck);
 

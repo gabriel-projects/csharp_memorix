@@ -35,7 +35,16 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 
         public async Task<ICard> GetCardAsync(Guid uid, CardOptions options)
         {
-            return await Query(options)
+            var query = Query(options);
+            
+            if (options.FilterUserId != Guid.Empty || options.FilterDeckId != Guid.Empty)
+            {
+                query = query
+                    .Include(c => c.DbDeck)
+                    .ThenInclude(d => d.DbUser);
+            }
+            
+            return await query
                    .AsNoTracking()
                    .FirstOrDefaultAsync(u => u.Uid == uid);
         }

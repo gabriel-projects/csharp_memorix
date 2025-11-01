@@ -32,17 +32,15 @@ namespace Api.GRRInnovations.Memorix.Controllers
             var userId = _userContext.RequireUserId();
 
             var options = DeckOptions.Create()
-                .WithFilterUserId([userId])
-                .WithFilterIds<DeckOptions.Builder>([deckId])
-                .Build();
+            .WithFilterUserId([userId])
+            .WithFilterIds<DeckOptions.Builder>([deckId])
+            .Build();
 
-            var decks = await _deckService.GetDecksAsync(options);
-            if (decks?.Any() == false)
+            var deck = await _deckService.GetDeckForUserAsync(deckId, options);
+            if (deck == null)
             {
                 return NotFound(Result<string>.Fail("Deck not found."));
             }
-
-            var deck = decks?.First();
 
             var response = await WrapperOutDeck.From(deck);
             return Ok(Result<WrapperOutDeck>.Ok(response));
