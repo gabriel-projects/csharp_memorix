@@ -4,6 +4,7 @@ using Api.GRRInnovations.Memorix.Domain.Entities;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
 using Api.GRRInnovations.Memorix.Domain.Models;
 using Api.GRRInnovations.Memorix.Infrastructure.Security.Authentication;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -22,15 +23,18 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Services
         private readonly JwtSettings _jwtSettings;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<JwtService> _logger;
 
         public JwtService(
             IOptions<JwtSettings> jwtSettings,
             IRefreshTokenRepository refreshTokenRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ILogger<JwtService> logger)
         {
             _jwtSettings = jwtSettings.Value;
             _refreshTokenRepository = refreshTokenRepository;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public JwtResultModel GenerateToken(IUser user)
@@ -184,9 +188,15 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Services
 
                 result = tokenHandler.ReadJwtToken(token);
             }
-            catch (Exception e)
+            catch (SecurityTokenException ex)
             {
-                Console.WriteLine(e);
+                _logger.LogWarning(ex, "Invalid JWT token. Token preview: {TokenPreview}", 
+                    !string.IsNullOrEmpty(token) && token.Length > 20 ? token.Substring(0, 20) : "N/A");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error validating JWT token");
                 return null;
             }
 

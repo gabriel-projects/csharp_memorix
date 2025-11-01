@@ -44,7 +44,8 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
                     .ThenInclude(d => d.DbUser);
             }
 
-            return await GetByIdAsync(uid);
+            return await query.AsNoTracking()
+                   .FirstOrDefaultAsync(u => u.Uid == uid);
         }
 
         public async Task<IEnumerable<ICard>> GetCardsAsync(CardOptions options)

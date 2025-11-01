@@ -40,9 +40,11 @@ namespace Api.GRRInnovations.Memorix
             // Middleware pipeline
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseMiddleware<ExceptionHandlingMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

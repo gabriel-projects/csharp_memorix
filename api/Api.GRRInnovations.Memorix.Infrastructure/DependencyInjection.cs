@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -89,9 +90,16 @@ namespace Api.GRRInnovations.Memorix.Infrastructure
 
         private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
         {
-            string connection = GetConnectionStringSQL(configuration);
+            using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+            var logger = loggerFactory.CreateLogger(typeof(DependencyInjection));
 
-            Console.WriteLine($"connection Startup: {connection}");
+            string connection = GetConnectionStringSQL(configuration, logger);
+
+            logger.LogDebug("Database connection configured successfully");
+            logger.LogDebug("Using {ConnectionSource}", 
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DATABASE_URL")) 
+                    ? "appsettings connection string" 
+                    : "DATABASE_URL environment variable");
 
             services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
             {
@@ -99,15 +107,18 @@ namespace Api.GRRInnovations.Memorix.Infrastructure
             });
         }
 
-        private static string GetConnectionStringSQL(IConfiguration configuration)
+        private static string GetConnectionStringSQL(IConfiguration configuration, ILogger logger)
         {
             var connectionString = configuration.GetConnectionString("SqlConnectionString");
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-            Console.WriteLine($"sqlConnection Startup: {connectionString}");
-            Console.WriteLine($"databaseUrl Startup: {databaseUrl}");
+            logger.LogDebug("SQL Connection String configured: {HasConnectionString}", !string.IsNullOrEmpty(connectionString));
+            logger.LogDebug("DATABASE_URL from environment: {HasDatabaseUrl}", !string.IsNullOrEmpty(databaseUrl));
 
-            var connection = string.IsNullOrEmpty(databaseUrl) ? connectionString : ConnectionHelper.BuildConnectionString(databaseUrl);
+            var connection = string.IsNullOrEmpty(databaseUrl) 
+                ? connectionString 
+                : ConnectionHelper.BuildConnectionString(databaseUrl, logger);
+            
             return connection;
         }
     }

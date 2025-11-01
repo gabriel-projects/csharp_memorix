@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,10 +25,19 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence
             var connectionString = config.GetConnectionString("SqlConnectionString");
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-            Console.WriteLine($"Connection from config: {connectionString}");
-            Console.WriteLine($"DATABASE_URL: {databaseUrl}");
+            // Criar logger para design-time (migrations)
+            using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole().SetMinimumLevel(LogLevel.Debug));
+            var logger = loggerFactory.CreateLogger<ApplicationDbContextFactory>();
 
-            var connection = string.IsNullOrEmpty(databaseUrl) ? connectionString : ConnectionHelper.BuildConnectionString(databaseUrl);
+            logger.LogDebug("Design-time DbContext factory - Config connection: {HasConfig}, DATABASE_URL: {HasEnv}", 
+                !string.IsNullOrEmpty(connectionString), 
+                !string.IsNullOrEmpty(databaseUrl));
+
+            var connection = string.IsNullOrEmpty(databaseUrl) 
+                ? connectionString 
+                : ConnectionHelper.BuildConnectionString(databaseUrl, logger);
+
+            logger.LogDebug("Database connection configured for design-time operations");
 
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             optionsBuilder.UseNpgsql(connection);
