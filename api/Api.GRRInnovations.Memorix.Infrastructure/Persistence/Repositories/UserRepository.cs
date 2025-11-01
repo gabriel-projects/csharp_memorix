@@ -11,27 +11,27 @@ using System.Threading.Tasks;
 
 namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 {
-    public class UserRepository : IUserRepository
+    /// <summary>
+    /// Repository for User that uses BaseRepository for basic CRUD operations
+    /// and maintains specific methods with UserOptions for complex queries
+    /// </summary>
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        private readonly ApplicationDbContext _dbContext;
-
         public UserRepository(ApplicationDbContext dbContext)
+            : base(dbContext)
         {
-            _dbContext = dbContext;
         }
 
         public async Task<IUser> CreateUserAsync(IUser user)
         {
             if (user is not User model) return null;
 
-            await _dbContext.Users.AddAsync(model).ConfigureAwait(false);
-
-            return model;
+            return await AddAsync(model);
         }
 
         public async Task<bool> ExistsByEmailAsync(Email email)
         {
-            return await _dbContext.Users
+            return await _dbSet
                 .AsNoTracking()
                 .AnyAsync(u => u.Email == email.Value.ToLowerInvariant().Trim());
         }
@@ -50,7 +50,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 
         private IQueryable<User> Query(UserOptions options)
         {
-            var query = _dbContext.Users.AsQueryable();
+            var query = _dbSet.AsQueryable();
 
             if (options == null)
                 return query;

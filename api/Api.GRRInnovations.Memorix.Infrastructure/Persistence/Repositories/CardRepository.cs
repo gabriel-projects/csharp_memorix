@@ -12,13 +12,15 @@ using System.Threading.Tasks;
 
 namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 {
-    public class CardRepository : ICardRepository
+    /// <summary>
+    /// Repository for Card that uses BaseRepository for basic CRUD operations
+    /// and maintains specific methods with CardOptions for complex queries
+    /// </summary>
+    public class CardRepository : BaseRepository<Card>, ICardRepository
     {
-        private readonly ApplicationDbContext _dbContext;
-
         public CardRepository(ApplicationDbContext context)
+            : base(context)
         {
-            _dbContext = context;
         }
 
         public async Task<ICard> AddCardAsync(ICard cardModel, IDeck inDeck)
@@ -28,9 +30,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 
             cardM.DeckUid = deckM.Uid;
 
-            await _dbContext.Cards.AddAsync(cardM).ConfigureAwait(false);
-
-            return cardM;
+            return await AddAsync(cardM);
         }
 
         public async Task<ICard> GetCardAsync(Guid uid, CardOptions options)
@@ -43,10 +43,8 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
                     .Include(c => c.DbDeck)
                     .ThenInclude(d => d.DbUser);
             }
-            
-            return await query
-                   .AsNoTracking()
-                   .FirstOrDefaultAsync(u => u.Uid == uid);
+
+            return await GetByIdAsync(uid);
         }
 
         public async Task<IEnumerable<ICard>> GetCardsAsync(CardOptions options)
@@ -56,7 +54,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 
         private IQueryable<Card> Query(CardOptions options)
         {
-            var query = _dbContext.Cards.AsQueryable();
+            var query = _dbSet.AsQueryable();
 
             if (options.FilterIds.Any())
                 query = query.Where(p => options.FilterIds.Contains(p.Uid));

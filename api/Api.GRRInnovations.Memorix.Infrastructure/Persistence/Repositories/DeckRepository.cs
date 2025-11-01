@@ -12,13 +12,15 @@ using System.Threading.Tasks;
 
 namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 {
-    public class DeckRepository : IDeckRepository
+    /// <summary>
+    /// Repository for Deck that uses BaseRepository for basic CRUD operations
+    /// and maintains specific methods with DeckOptions for complex queries
+    /// </summary>
+    public class DeckRepository : BaseRepository<Deck>, IDeckRepository
     {
-        private readonly ApplicationDbContext _dbContext;
-
         public DeckRepository(ApplicationDbContext context)
+            : base(context)
         {
-            _dbContext = context;
         }
 
         public async Task<IDeck> AddDeckAsync(IDeck deckModel, IUser inUser)
@@ -28,9 +30,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 
             deckM.UserUid = userM.Uid;
 
-            await _dbContext.Decks.AddAsync(deckM).ConfigureAwait(false);
-
-            return deckM;
+            return await AddAsync(deckM);
         }
 
         public async Task<List<IDeck>> GetDecksAsync(DeckOptions options)
@@ -40,7 +40,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 
         private IQueryable<Deck> Query(DeckOptions options)
         {
-            var query = _dbContext.Decks.AsQueryable();
+            var query = _dbSet.AsQueryable();
 
             if (options.FilterIds.Any())
                 query = query.Where(p => options.FilterIds.Contains(p.Uid));

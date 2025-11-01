@@ -8,18 +8,19 @@ using System.Threading.Tasks;
 
 namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 {
-    public class RefreshTokenRepository : IRefreshTokenRepository
+    /// <summary>
+    /// Repository for RefreshToken that uses BaseRepository for basic CRUD operations
+    /// </summary>
+    public class RefreshTokenRepository : BaseRepository<RefreshToken>, IRefreshTokenRepository
     {
-        private readonly ApplicationDbContext _dbContext;
-
         public RefreshTokenRepository(ApplicationDbContext dbContext)
+            : base(dbContext)
         {
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public async Task<RefreshToken?> GetByTokenAsync(string token, CancellationToken cancellationToken = default)
         {
-            return await _dbContext.RefreshTokens
+            return await _dbSet
                 .AsNoTracking()
                 .Include(rt => rt.DbUser)
                 .FirstOrDefaultAsync(rt => rt.Token == token, cancellationToken);
@@ -27,26 +28,26 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 
         public async Task<RefreshToken> CreateAsync(RefreshToken refreshToken, CancellationToken cancellationToken = default)
         {
-            await _dbContext.RefreshTokens.AddAsync(refreshToken, cancellationToken);
-            return refreshToken;
+            return await AddAsync(refreshToken, cancellationToken);
         }
 
         public async Task RevokeAsync(Guid tokenId, string? replacedByToken = null, CancellationToken cancellationToken = default)
         {
-            var token = await _dbContext.RefreshTokens
-                .FirstOrDefaultAsync(rt => rt.Uid == tokenId, cancellationToken);
+            var token = await GetByIdAsync(tokenId, cancellationToken);
 
             if (token != null)
             {
                 token.IsRevoked = true;
                 token.RevokedAt = DateTime.UtcNow;
                 token.ReplacedByToken = replacedByToken;
+
+                _context.Entry(token).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             }
         }
 
         public async Task RevokeAllForUserAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            var tokens = await _dbContext.RefreshTokens
+            var tokens = await _dbSet
                 .Where(rt => rt.UserUid == userId && !rt.IsRevoked && rt.ExpiresAt > DateTime.UtcNow)
                 .ToListAsync(cancellationToken);
 
