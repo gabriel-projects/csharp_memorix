@@ -25,7 +25,10 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Services
 
         public JwtResultModel GenerateToken(IUser user)
         {
-            var expireDiff = TimeSpan.FromDays(10);
+            var expirationMinutes = _jwtSettings.ExpirationDays > 0 
+                ? _jwtSettings.ExpirationDays 
+                : 10; 
+            var expireDiff = TimeSpan.FromDays(expirationMinutes);
 
             var jwtData = new JwtModel(user);
 
