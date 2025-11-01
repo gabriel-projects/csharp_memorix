@@ -17,6 +17,7 @@ namespace Api.GRRInnovations.Memorix.Application
             services.AddScoped<ICardService, CardService>();
             services.AddScoped<IDeckService, DeckService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IOwnershipValidationService, OwnershipValidationService>();
         }
     }
 }

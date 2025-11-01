@@ -14,11 +14,16 @@ namespace Api.GRRInnovations.Memorix.Application.Services
     {
         private readonly IDeckRepository _deckRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IOwnershipValidationService _ownershipValidationService;
 
-        public DeckService(IDeckRepository deckRepository, IUnitOfWork unitOfWork)
+        public DeckService(
+            IDeckRepository deckRepository, 
+            IUnitOfWork unitOfWork,
+            IOwnershipValidationService ownershipValidationService)
         {
             _deckRepository = deckRepository;
             _unitOfWork = unitOfWork;
+            _ownershipValidationService = ownershipValidationService ?? throw new ArgumentNullException(nameof(ownershipValidationService));
         }
 
         public async Task<IDeck> AddDeckAsync(IDeck deckModel, IUser inUser)
@@ -43,10 +48,7 @@ namespace Api.GRRInnovations.Memorix.Application.Services
 
             var userId = options.FilterUsersId.FirstOrDefault();
 
-            if (deck is Domain.Entities.Deck deckEntity && deckEntity.UserUid != userId)
-            {
-                throw new UnauthorizedAccessException("You don't have permission to access this deck.");
-            }
+            _ownershipValidationService.ValidateDeckOwnership(deck, userId);
 
             return deck;
         }

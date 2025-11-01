@@ -10,11 +10,16 @@ namespace Api.GRRInnovations.Memorix.Application.Services
     {
         private readonly ICardRepository _cardRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IOwnershipValidationService _ownershipValidationService;
 
-        public CardService(ICardRepository cardRepository, IUnitOfWork unitOfWork)
+        public CardService(
+            ICardRepository cardRepository, 
+            IUnitOfWork unitOfWork,
+            IOwnershipValidationService ownershipValidationService)
         {
             _cardRepository = cardRepository;
             _unitOfWork = unitOfWork;
+            _ownershipValidationService = ownershipValidationService ?? throw new ArgumentNullException(nameof(ownershipValidationService));
         }
 
         public async Task<ICard> AddCardAsync(ICard cardModel, IDeck inDeck)
@@ -24,7 +29,6 @@ namespace Api.GRRInnovations.Memorix.Application.Services
             return card;
         }
 
-        //todo: teste get card for a different user
         public async Task<ICard> GetCardForUserAsync(Guid cardId, CardOptions options)
         {
             var card = await _cardRepository.GetCardAsync(cardId, options);
@@ -34,13 +38,7 @@ namespace Api.GRRInnovations.Memorix.Application.Services
 
             var userId = options.FilterUserId;
 
-            if (card is Domain.Entities.Card cardEntity)
-            {
-                if (cardEntity.DbDeck.DbUser.Uid != userId)
-                {
-                    throw new UnauthorizedAccessException("You don't have permission to access this card.");
-                }
-            }
+            _ownershipValidationService.ValidateCardOwnership(card, userId);
 
             return card;
         }
