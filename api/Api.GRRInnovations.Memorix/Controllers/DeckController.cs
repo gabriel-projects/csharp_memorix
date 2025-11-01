@@ -39,11 +39,11 @@ namespace Api.GRRInnovations.Memorix.Controllers
             var deck = await _deckService.GetDeckForUserAsync(deckId, options);
             if (deck == null)
             {
-                return NotFound(Result<string>.Fail("Deck not found."));
+                return NotFound(Result<string>.Failure(Error.NotFound("Deck")));
             }
 
             var response = await WrapperOutDeck.From(deck);
-            return Ok(Result<WrapperOutDeck>.Ok(response));
+            return Ok(Result<WrapperOutDeck>.SuccessResult(response));
         }
 
         [HttpGet("all")]
@@ -59,11 +59,11 @@ namespace Api.GRRInnovations.Memorix.Controllers
             var decks = await _deckService.GetDecksAsync(options);
             if (decks?.Any() == false)
             {
-                return NotFound(Result<string>.Fail("Deck not found."));
+                return NotFound(Result<string>.Failure(Error.NotFound("Deck")));
             }
 
             var response = await WrapperOutDeck.From(decks);
-            return Ok(Result<List<WrapperOutDeck>>.Ok(response));
+            return Ok(Result<List<WrapperOutDeck>>.SuccessResult(response));
         }
 
         [HttpPost]
@@ -80,12 +80,12 @@ namespace Api.GRRInnovations.Memorix.Controllers
 
             var user = await _userService.GetUserByUidAsync(userId);
             if (user == null)
-                return NotFound(Result<string>.Fail("User not found."));
+                return NotFound(Result<string>.Failure(Error.NotFound("User")));
 
             var deck = await _deckService.AddDeckAsync(deckModel, user);
 
             var response = await WrapperOutDeck.From(deck);
-            return Ok(Result<WrapperOutDeck>.Ok(response));
+            return Ok(Result<WrapperOutDeck>.SuccessResult(response));
         }
     }
 }

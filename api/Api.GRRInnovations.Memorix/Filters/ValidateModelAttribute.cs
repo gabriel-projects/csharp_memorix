@@ -16,7 +16,7 @@ namespace Api.GRRInnovations.Memorix.Filters
                     .ToList();
 
                 var errorMessage = string.Join("; ", errors);
-                var result = Result<object>.Fail(Error.Validation(errorMessage), context.HttpContext.TraceIdentifier);
+                var result = Result<object>.Failure(Error.Validation(errorMessage), context.HttpContext.TraceIdentifier);
 
                 context.Result = new BadRequestObjectResult(result);
             }

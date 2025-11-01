@@ -1,9 +1,12 @@
-﻿using Api.GRRInnovations.Memorix.Domain.Common;
+﻿using Api.GRRInnovations.Memorix.Application.Interfaces;
+using Api.GRRInnovations.Memorix.Domain.Common;
 using Api.GRRInnovations.Memorix.Domain.Entities;
 using Api.GRRInnovations.Memorix.Domain.ValueObjects;
 using Api.GRRInnovations.Memorix.Infrastructure.Persistence.ValueGenerators;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +22,16 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence
         internal DbSet<User> Users { get; set; }
         internal DbSet<RefreshToken> RefreshTokens { get; set; }
 
+        private readonly IHttpContextAccessor? _httpContextAccessor;
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor? httpContextAccessor) 
+            : base(options)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -76,7 +87,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence
             }
             catch (Exception)
             {
-                RollBack();
+                Rollback();
                 throw;
             }
 
@@ -85,20 +96,51 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence
 
         private void AdjustChanges()
         {
-            var changesv3 = ChangeTracker.Entries<BaseModel>().Where(p => p.State == EntityState.Modified || p.State == EntityState.Added);
+            var changes = ChangeTracker.Entries<BaseModel>().Where(p => p.State == EntityState.Modified || p.State == EntityState.Added);
 
-            foreach (var entry in changesv3)
+            Guid? currentUserId = GetCurrentUserId();
+
+            foreach (var entry in changes)
             {
                 entry.Property(p => p.UpdatedAt).CurrentValue = DateTime.UtcNow;
+
+                if (currentUserId.HasValue)
+                {
+                    entry.Property(p => p.UpdatedBy).CurrentValue = currentUserId.Value;
+                }
 
                 if (entry.State == EntityState.Added)
                 {
                     entry.Property(p => p.CreatedAt).CurrentValue = DateTime.UtcNow;
+                    if (currentUserId.HasValue)
+                    {
+                        entry.Property(p => p.UpdatedBy).CurrentValue = currentUserId.Value;
+                    }
                 }
             }
         }
 
-        public void RollBack()
+        /// <summary>
+        /// Gets the current user ID from IUserContext via HttpContext
+        /// Returns null if user is not authenticated or HttpContext is not available
+        /// </summary>
+        private Guid? GetCurrentUserId()
+        {
+            try
+            {
+                if (_httpContextAccessor?.HttpContext == null)
+                    return null;
+
+                var userContext = _httpContextAccessor.HttpContext.RequestServices?.GetService<IUserContext>();
+                return userContext?.UserId;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public void Rollback()
         {
             var changedEntries = ChangeTracker.Entries()
                 .Where(x => x.State != EntityState.Unchanged).ToList();

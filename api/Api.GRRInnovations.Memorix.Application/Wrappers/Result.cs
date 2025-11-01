@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Api.GRRInnovations.Memorix.Application.Wrappers
 {
@@ -11,44 +12,32 @@ namespace Api.GRRInnovations.Memorix.Application.Wrappers
         /// <summary>
         /// Indicates whether the operation was successful
         /// </summary>
+        [JsonPropertyName("is_success")]
         public bool IsSuccess { get; private set; }
 
         /// <summary>
         /// Indicates whether the operation failed
         /// </summary>
+        [JsonPropertyName("is_failure")]
         public bool IsFailure => !IsSuccess;
 
         /// <summary>
         /// The value returned on success (only available when IsSuccess is true)
         /// </summary>
+        [JsonPropertyName("value")]
         public T? Value { get; private set; }
 
         /// <summary>
         /// The error information (only available when IsFailure is true)
         /// </summary>
+        [JsonPropertyName("error")]
         public Error? Error { get; private set; }
 
         /// <summary>
         /// Trace identifier for request correlation
         /// </summary>
+        [JsonPropertyName("trace_id")]
         public string? TraceId { get; private set; }
-
-        // Backward compatibility properties
-        /// <summary>
-        /// Legacy property for backward compatibility (maps to IsSuccess)
-        /// </summary>
-        public bool Success => IsSuccess;
-
-        /// <summary>
-        /// Legacy property for backward compatibility (maps to Value)
-        /// Note: This is readonly. Use Success() or Fail() static methods to create results.
-        /// </summary>
-        public T? Data => Value;
-
-        /// <summary>
-        /// Legacy property for backward compatibility (maps to Error.Message or null)
-        /// </summary>
-        public string? Message => Error?.Message;
 
         private Result(T value, string? traceId = null)
         {
@@ -75,24 +64,5 @@ namespace Api.GRRInnovations.Memorix.Application.Wrappers
         /// Creates a failed result with the specified error
         /// </summary>
         public static Result<T> Failure(Error error, string? traceId = null) => new(error, traceId);
-
-        // Legacy static methods for backward compatibility
-        /// <summary>
-        /// Creates a successful result (legacy method for backward compatibility)
-        /// </summary>
-        public static Result<T> Ok(T data, string? message = null, string? traceId = null)
-            => new(data, traceId);
-
-        /// <summary>
-        /// Creates a failed result (legacy method for backward compatibility)
-        /// </summary>
-        public static Result<T> Fail(string message, string? traceId = null)
-            => new(new Error("Error", message), traceId);
-
-        /// <summary>
-        /// Creates a failed result with an Error object
-        /// </summary>
-        public static Result<T> Fail(Error error, string? traceId = null)
-            => new(error, traceId);
     }
 }

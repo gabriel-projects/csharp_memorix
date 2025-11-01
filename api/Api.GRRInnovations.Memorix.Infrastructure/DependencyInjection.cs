@@ -32,10 +32,14 @@ namespace Api.GRRInnovations.Memorix.Infrastructure
 
             
             services.AddScoped<IUserContext, UserContext>();
+            services.AddHttpContextAccessor();
 
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))
             {
-                services.AddDbContext<ApplicationDbContext>(opt => opt.UseInMemoryDatabase("MemorixDb"));
+                services.AddDbContext<ApplicationDbContext>((serviceProvider, opt) =>
+                {
+                    opt.UseInMemoryDatabase("MemorixDb");
+                });
             }
             else
             {
@@ -89,7 +93,10 @@ namespace Api.GRRInnovations.Memorix.Infrastructure
 
             Console.WriteLine($"connection Startup: {connection}");
 
-            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connection));
+            services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+            {
+                options.UseNpgsql(connection);
+            });
         }
 
         private static string GetConnectionStringSQL(IConfiguration configuration)

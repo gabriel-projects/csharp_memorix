@@ -39,21 +39,21 @@ namespace Api.GRRInnovations.Memorix.Middlewares
             {
                 case DomainException:
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    result = Result<object>.Fail(Error.BadRequest(ex.Message), context.TraceIdentifier);
+                    result = Result<object>.Failure(Error.BadRequest(ex.Message), context.TraceIdentifier);
 
                     _logger.LogWarning(ex, "Domain error: {Message}", ex.Message);
                     break;
 
                 case UnauthorizedAccessException:
                     response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    result = Result<object>.Fail(Error.Unauthorized(), context.TraceIdentifier);
+                    result = Result<object>.Failure(Error.Unauthorized(), context.TraceIdentifier);
 
                     _logger.LogWarning(ex, "Unauthorized access: {Message}", ex.Message);
                     break;
 
                 default:
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    result = Result<object>.Fail(Error.InternalError("Unexpected error occurred."), context.TraceIdentifier);
+                    result = Result<object>.Failure(Error.InternalError("Unexpected error occurred."), context.TraceIdentifier);
 
                     _logger.LogError(ex, "Unexpected error: {Message}", ex.Message);
                     break;

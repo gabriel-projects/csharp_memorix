@@ -27,13 +27,13 @@ namespace Api.GRRInnovations.Memorix.Controllers
         {
             var wrapperModel = await wrapperInRegister.Result();
             if (wrapperModel == null)
-                return BadRequest(Result<string>.Fail("Invalid input data."));
+                return BadRequest(Result<string>.Failure(Error.Validation("Invalid input data.")));
 
             var user = await _authService.RegisterAsync(wrapperModel);
 
             var response = await WrapperOutUser.From(user);
 
-            return Ok(Result<WrapperOutUser>.Ok(response));
+            return Ok(Result<WrapperOutUser>.SuccessResult(response));
         }
 
         [HttpPost("login")]
@@ -41,12 +41,12 @@ namespace Api.GRRInnovations.Memorix.Controllers
         public async Task<IActionResult> Login([FromBody] WrapperInLogin wrapperInLogin)
         {
             var user = await _authService.ValidateAsync(wrapperInLogin.Email, wrapperInLogin.Password);
-            if (user == null) return Unauthorized(Result<string>.Fail("Invalid credentials."));
+            if (user == null) return Unauthorized(Result<string>.Failure(Error.Unauthorized()));
 
             var jwt = await _jwtService.GenerateTokenWithRefreshTokenAsync(user);
 
             var response = await WrapperOutJwtResult.From(jwt).ConfigureAwait(false);
-            return new OkObjectResult(Result<WrapperOutJwtResult>.Ok(response));
+            return new OkObjectResult(Result<WrapperOutJwtResult>.SuccessResult(response));
         }
 
         [HttpPost("refresh-token")]
@@ -54,15 +54,15 @@ namespace Api.GRRInnovations.Memorix.Controllers
         public async Task<IActionResult> RefreshToken([FromBody] WrapperInRefreshToken request)
         {
             if (string.IsNullOrWhiteSpace(request.RefreshToken))
-                return BadRequest(Result<string>.Fail("Refresh token is required."));
+                return BadRequest(Result<string>.Failure(Error.Validation("Refresh token is required.")));
 
             var jwt = await _jwtService.RefreshTokenAsync(request.RefreshToken);
             
             if (jwt == null)
-                return Unauthorized(Result<string>.Fail("Invalid or expired refresh token."));
+                return Unauthorized(Result<string>.Failure(Error.Unauthorized()));
 
             var response = await WrapperOutJwtResult.From(jwt).ConfigureAwait(false);
-            return new OkObjectResult(Result<WrapperOutJwtResult>.Ok(response));
+            return new OkObjectResult(Result<WrapperOutJwtResult>.SuccessResult(response));
         }
 
         [HttpPost("revoke-token")]
@@ -70,11 +70,11 @@ namespace Api.GRRInnovations.Memorix.Controllers
         public async Task<IActionResult> RevokeToken([FromBody] WrapperInRefreshToken request)
         {
             if (string.IsNullOrWhiteSpace(request.RefreshToken))
-                return BadRequest(Result<string>.Fail("Refresh token is required."));
+                return BadRequest(Result<string>.Failure(Error.Validation("Refresh token is required.")));
 
             await _jwtService.RevokeRefreshTokenAsync(request.RefreshToken);
             
-            return Ok(Result<string>.Ok("Token revoked successfully."));
+            return Ok(Result<string>.SuccessResult("Token revoked successfully."));
         }
     }
 }

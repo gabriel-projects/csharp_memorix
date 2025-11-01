@@ -39,11 +39,11 @@ namespace Api.GRRInnovations.Memorix.Controllers
                 
             if (card == null)
             {
-                return NotFound(Result<string>.Fail("Card not found."));
+                return NotFound(Result<string>.Failure(Error.NotFound("Card")));
             }
 
             var response = await WrapperOutCard.From(card);
-            return Ok(Result<WrapperOutCard>.Ok(response));
+            return Ok(Result<WrapperOutCard>.SuccessResult(response));
         }
 
         [HttpGet("deck/id/{deckId}/all")]
@@ -60,7 +60,7 @@ namespace Api.GRRInnovations.Memorix.Controllers
             var deck = await _deckService.GetDeckForUserAsync(deckId, deckOptions);
             if (deck == null)
             {
-                return NotFound(Result<string>.Fail("Deck not found."));
+                return NotFound(Result<string>.Failure(Error.NotFound("Deck")));
             }
 
             var cardOptions = CardOptions.Create()
@@ -69,7 +69,7 @@ namespace Api.GRRInnovations.Memorix.Controllers
             var cards = await _cardService.GetCardsAsync(cardOptions);
 
             var response = await WrapperOutCard.From(cards);
-            return Ok(Result<IEnumerable<WrapperOutCard>>.Ok(response));
+            return Ok(Result<IEnumerable<WrapperOutCard>>.SuccessResult(response));
         }
 
         [HttpPost("deck/id/{deckId}")]
@@ -85,19 +85,19 @@ namespace Api.GRRInnovations.Memorix.Controllers
             var deck = await _deckService.GetDeckForUserAsync(deckId, deckOptions);
             if (deck == null)
             {
-                return NotFound(Result<string>.Fail("Deck not found."));
+                return NotFound(Result<string>.Failure(Error.NotFound("Deck")));
             }
 
             var cardModel = await wrapperInCard.Result();
             if (cardModel == null)
             {
-                return BadRequest(Result<string>.Fail("Invalid card data."));
+                return BadRequest(Result<string>.Failure(Error.Validation("Invalid card data.")));
             }
 
             var createdCard = await _cardService.AddCardAsync(cardModel, deck);
 
             var response = await WrapperOutCard.From(createdCard);
-            return Ok(Result<WrapperOutCard>.Ok(response));
+            return Ok(Result<WrapperOutCard>.SuccessResult(response));
         }
     }
 }

@@ -30,10 +30,10 @@ namespace Api.GRRInnovations.Memorix.Controllers
 
             var user = await _userService.GetUserByUidAsync(userId);
             if (user == null)
-                return NotFound(Result<string>.Fail("User not found."));
+                return NotFound(Result<string>.Failure(Error.NotFound("User")));
 
             var response = await WrapperOutUser.From(user);
-            return Ok(Result<WrapperOutUser>.Ok(response));
+            return Ok(Result<WrapperOutUser>.SuccessResult(response));
         }
 
         [HttpGet("full")]
@@ -48,10 +48,10 @@ namespace Api.GRRInnovations.Memorix.Controllers
 
             var user = await _userService.GetUserByUidAsync(userId, options);
             if (user == null)
-                return NotFound(Result<string>.Fail("User not found."));
+                return NotFound(Result<string>.Failure(Error.NotFound("User")));
 
             var response = await WrapperOutUserFull.From(user);
-            return Ok(Result<WrapperOutUserFull>.Ok(response));
+            return Ok(Result<WrapperOutUserFull>.SuccessResult(response));
         }
     }
 }
