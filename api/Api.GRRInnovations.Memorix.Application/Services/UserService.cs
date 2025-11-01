@@ -2,27 +2,24 @@
 using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
 using Api.GRRInnovations.Memorix.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Api.GRRInnovations.Memorix.Application.Services
 {
+    /// <summary>
+    /// Service for user operations that coordinates between repositories and other services
+    /// </summary>
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+
         public UserService(IUserRepository userRepository)
         {
-            _userRepository = userRepository;
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
-        public Task<IUser> CreateUserAsync(IUser userModel)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// Retrieves a user by their unique identifier
+        /// </summary>
         public Task<IUser> GetUserByUidAsync(Guid uid, UserOptions? userOptions = null)
         {
             return _userRepository.GetUserAsync(uid, userOptions);

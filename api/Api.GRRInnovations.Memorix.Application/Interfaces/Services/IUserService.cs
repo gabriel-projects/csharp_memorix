@@ -10,8 +10,6 @@ namespace Api.GRRInnovations.Memorix.Application.Interfaces.Services
 {
     public interface IUserService
     {
-        Task<IUser> CreateUserAsync(IUser userModel);
-
         Task<IUser> GetUserByUidAsync(Guid uid, UserOptions? userOptions = null);
     }
 }
