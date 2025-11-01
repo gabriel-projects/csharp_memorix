@@ -34,7 +34,6 @@ namespace Api.GRRInnovations.Memorix.Application.Services
                 {
                     cardOwnerId = cardEntity.DbDeck.DbUser.Uid;
                 }
-
                 else if (cardEntity.DeckUid != Guid.Empty)
                 {
                     _logger.LogWarning(

@@ -33,9 +33,24 @@ namespace Api.GRRInnovations.Memorix
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // Database migrations
-            var scope = app.ApplicationServices.CreateScope();
-            _ = MigrationHelper.ManageDataAsync(scope.ServiceProvider);
+            try
+            {
+                using var scope = app.ApplicationServices.CreateScope();
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Startup>>();
+
+                if (env.IsDevelopment() || env.IsEnvironment("Migration"))
+                {
+                    logger.LogInformation("Applying database migrations...");
+                    _ = MigrationHelper.ManageDataAsync(scope.ServiceProvider);
+                    logger.LogInformation("Database migrations completed successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                var rootLogger = app.ApplicationServices.GetRequiredService<ILogger<Startup>>();
+                rootLogger.LogError(ex, "Failed to apply database migrations on startup");
+                throw;
+            }
 
             // Middleware pipeline
             app.UseHttpsRedirection();

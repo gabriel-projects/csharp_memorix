@@ -4,14 +4,14 @@ namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
 {
     public sealed class CardOptions : BaseQueryOptions<CardOptions, Card>
     {
-        public Guid FilterUserId { get; }
+        public Guid? FilterUserId { get; }
 
-        public Guid FilterDeckId { get; init; }
+        public Guid? FilterDeckId { get; }
 
         private CardOptions(
             IEnumerable<Guid>? filterIds,
-            Guid filterUserId,
-            Guid filterDeckId)
+            Guid? filterUserId,
+            Guid? filterDeckId)
             : base(filterIds)
         {
             FilterUserId = filterUserId;
@@ -22,9 +22,8 @@ namespace Api.GRRInnovations.Memorix.Domain.ValueObjects
 
         public sealed class Builder : BuilderBase
         {
-            private Guid _filterUserId;
-
-            private Guid _filterDeckId;
+            private Guid? _filterUserId;
+            private Guid? _filterDeckId;
 
             public Builder WithFilterDeckId(Guid deckId)
             {

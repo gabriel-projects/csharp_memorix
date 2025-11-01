@@ -36,7 +36,7 @@ namespace Api.GRRInnovations.Memorix.Application.Services
             if (card == null)
                 return null;
 
-            var userId = options.FilterUserId;
+            var userId = options.FilterUserId ?? throw new ArgumentException("FilterUserId is required for GetCardForUserAsync", nameof(options));
 
             _ownershipValidationService.ValidateCardOwnership(card, userId);
 

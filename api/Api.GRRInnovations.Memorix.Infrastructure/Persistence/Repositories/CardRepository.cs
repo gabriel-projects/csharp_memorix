@@ -39,7 +39,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
         {
             var query = Query(options);
             
-            if (options.FilterUserId != Guid.Empty || options.FilterDeckId != Guid.Empty)
+            if (options.FilterUserId.HasValue || options.FilterDeckId.HasValue)
             {
                 query = query
                     .Include(c => c.DbDeck)
@@ -62,15 +62,15 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
             if (options.FilterIds.Any())
                 query = query.Where(p => options.FilterIds.Contains(p.Uid));
 
-            if (options.FilterDeckId != Guid.Empty)
-                query = query.Where(p => p.DeckUid == options.FilterDeckId);
+            if (options.FilterDeckId.HasValue)
+                query = query.Where(p => p.DeckUid == options.FilterDeckId.Value);
 
-            if (options.FilterUserId != Guid.Empty)
+            if (options.FilterUserId.HasValue)
             {
                 query = query
                     .Include(c => c.DbDeck)
                     .ThenInclude(d => d.DbUser)
-                    .Where(p => p.DbDeck.DbUser.Uid == options.FilterUserId);
+                    .Where(p => p.DbDeck.DbUser.Uid == options.FilterUserId.Value);
             }
 
             return query;

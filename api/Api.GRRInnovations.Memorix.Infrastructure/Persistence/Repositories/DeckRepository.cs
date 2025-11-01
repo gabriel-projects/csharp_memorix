@@ -25,8 +25,10 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 
         public async Task<IDeck> AddDeckAsync(IDeck deckModel, IUser inUser)
         {
-            if (deckModel is not Deck deckM) return null;
-            if (inUser is not User userM) return null;
+            if (deckModel is not Deck deckM)
+                throw new ArgumentException("Invalid deck model type", nameof(deckModel));
+            if (inUser is not User userM)
+                throw new ArgumentException("Invalid user model type", nameof(inUser));
 
             deckM.UserUid = userM.Uid;
 
