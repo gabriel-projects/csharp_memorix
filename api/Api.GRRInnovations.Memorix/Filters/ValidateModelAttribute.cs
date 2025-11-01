@@ -15,8 +15,8 @@ namespace Api.GRRInnovations.Memorix.Filters
                     .Select(e => e.ErrorMessage)
                     .ToList();
 
-                var result = Result<object>.Fail("Invalid input data.", context.HttpContext.TraceIdentifier);
-                result.Data = errors;
+                var errorMessage = string.Join("; ", errors);
+                var result = Result<object>.Fail(Error.Validation(errorMessage), context.HttpContext.TraceIdentifier);
 
                 context.Result = new BadRequestObjectResult(result);
             }
