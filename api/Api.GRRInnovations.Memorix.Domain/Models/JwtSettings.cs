@@ -12,5 +12,6 @@ namespace Api.GRRInnovations.Memorix.Domain.Models
         public string Issuer { get; set; }
         public string Audience { get; set; }
         public int ExpirationDays { get; set; }
+        public int RefreshTokenExpirationDays { get; set; } = 30;
     }
 }

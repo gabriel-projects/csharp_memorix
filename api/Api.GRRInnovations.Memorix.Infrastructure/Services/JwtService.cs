@@ -1,4 +1,6 @@
-﻿using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
+﻿using Api.GRRInnovations.Memorix.Application.Interfaces.Persistence;
+using Api.GRRInnovations.Memorix.Application.Interfaces.Services;
+using Api.GRRInnovations.Memorix.Domain.Entities;
 using Api.GRRInnovations.Memorix.Domain.Interfaces;
 using Api.GRRInnovations.Memorix.Domain.Models;
 using Api.GRRInnovations.Memorix.Infrastructure.Security.Authentication;
@@ -9,6 +11,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,10 +20,17 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Services
     public class JwtService : IJwtService
     {
         private readonly JwtSettings _jwtSettings;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public JwtService(IOptions<JwtSettings> jwtSettings)
+        public JwtService(
+            IOptions<JwtSettings> jwtSettings,
+            IRefreshTokenRepository refreshTokenRepository,
+            IUnitOfWork unitOfWork)
         {
             _jwtSettings = jwtSettings.Value;
+            _refreshTokenRepository = refreshTokenRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public JwtResultModel GenerateToken(IUser user)
@@ -64,6 +74,75 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Services
             }; ;
 
             return result;
+        }
+
+        public async Task<JwtResultModel> GenerateTokenWithRefreshTokenAsync(IUser user)
+        {
+            var jwtResult = GenerateToken(user);
+            var refreshToken = await GenerateRefreshTokenAsync(user);
+            
+            jwtResult.RefreshToken = refreshToken.Token;
+            
+            await _unitOfWork.SaveChangesAsync();
+            
+            return jwtResult;
+        }
+
+        public async Task<JwtResultModel?> RefreshTokenAsync(string refreshToken)
+        {
+            var token = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+            
+            if (token == null || !await _refreshTokenRepository.IsTokenValidAsync(refreshToken))
+            {
+                return null;
+            }
+
+            await _refreshTokenRepository.RevokeAsync(token.Uid);
+            
+            if (token.DbUser == null)
+            {
+                return null;
+            }
+
+            var newTokens = await GenerateTokenWithRefreshTokenAsync(token.DbUser);
+            
+            return newTokens;
+        }
+
+        public async Task RevokeRefreshTokenAsync(string refreshToken)
+        {
+            var token = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+            
+            if (token != null)
+            {
+                await _refreshTokenRepository.RevokeAsync(token.Uid);
+                await _unitOfWork.SaveChangesAsync();
+            }
+        }
+
+        private async Task<RefreshToken> GenerateRefreshTokenAsync(IUser user)
+        {
+            var randomNumber = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            
+            var refreshTokenValue = Convert.ToBase64String(randomNumber);
+            
+            var expirationDays = _jwtSettings.RefreshTokenExpirationDays > 0
+                ? _jwtSettings.RefreshTokenExpirationDays
+                : 30;
+            
+            var refreshToken = new RefreshToken
+            {
+                UserUid = user.Uid,
+                Token = refreshTokenValue,
+                ExpiresAt = DateTime.UtcNow.AddDays(expirationDays),
+                IsRevoked = false
+            };
+
+            await _refreshTokenRepository.CreateAsync(refreshToken);
+            
+            return refreshToken;
         }
 
         public IUser? FromJwt(string token)

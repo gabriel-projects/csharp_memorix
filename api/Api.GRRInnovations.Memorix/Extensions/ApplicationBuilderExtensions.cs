@@ -11,7 +11,7 @@ namespace Api.GRRInnovations.Memorix.Extensions
         {
             if (env.IsDevelopment())
             {
-                endpoints.MapOpenApi();
+                endpoints.MapOpenApi().AllowAnonymous();
 
                 endpoints.MapScalarApiReference(options =>
                 {
@@ -19,7 +19,7 @@ namespace Api.GRRInnovations.Memorix.Extensions
                         .WithTitle("Memorix API")
                         .WithTheme(ScalarTheme.Mars)
                         .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
-                });
+                }).AllowAnonymous();
             }
 
             return endpoints;

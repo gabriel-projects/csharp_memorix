@@ -35,6 +35,13 @@ namespace Api.GRRInnovations.Memorix.Application.Wrappers.Out
             set => Data.Type = value;
         }
 
+        [JsonPropertyName("refresh_token")]
+        public string RefreshToken
+        {
+            get => Data.RefreshToken;
+            set => Data.RefreshToken = value;
+        }
+
         public new static async Task<WrapperOutJwtResult> From(JwtResultModel model)
         {
             var wrapper = new WrapperOutJwtResult();

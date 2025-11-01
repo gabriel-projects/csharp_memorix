@@ -17,6 +17,7 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence
         internal DbSet<Card> Cards { get; set; }
         internal DbSet<Deck> Decks { get; set; }
         internal DbSet<User> Users { get; set; }
+        internal DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
@@ -46,6 +47,17 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence
                 .IsRequired();
             modelBuilder.Entity<User>().Property(x => x.PasswordHash).HasMaxLength(150).IsRequired();
             modelBuilder.Entity<User>().Property(x => x.Name).HasMaxLength(150).IsRequired();
+
+            DefaultModelSetup<RefreshToken>(modelBuilder);
+            modelBuilder.Entity<RefreshToken>()
+                .HasOne(x => x.DbUser)
+                .WithMany()
+                .HasForeignKey(x => x.UserUid)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<RefreshToken>().Ignore(x => x.User);
+            modelBuilder.Entity<RefreshToken>().Property(x => x.Token).HasMaxLength(500).IsRequired();
+            modelBuilder.Entity<RefreshToken>().HasIndex(x => x.Token).IsUnique();
+            modelBuilder.Entity<RefreshToken>().HasIndex(x => x.UserUid);
         }
 
         public override int SaveChanges()
