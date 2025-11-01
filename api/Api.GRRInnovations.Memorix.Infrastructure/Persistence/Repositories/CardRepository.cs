@@ -25,8 +25,10 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence.Repositories
 
         public async Task<ICard> AddCardAsync(ICard cardModel, IDeck inDeck)
         {
-            if (cardModel is not Card cardM) return null;
-            if (inDeck is not Deck deckM) return null;
+            if (cardModel is not Card cardM)
+                throw new ArgumentException("Invalid card model type", nameof(cardModel));
+            if (inDeck is not Deck deckM)
+                throw new ArgumentException("Invalid deck model type", nameof(inDeck));
 
             cardM.DeckUid = deckM.Uid;
 
