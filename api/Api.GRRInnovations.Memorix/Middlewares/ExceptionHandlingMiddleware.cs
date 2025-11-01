@@ -44,6 +44,13 @@ namespace Api.GRRInnovations.Memorix.Middlewares
                     _logger.LogWarning(ex, "Domain error: {Message}", ex.Message);
                     break;
 
+                case UnauthorizedAccessException:
+                    response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    result = Result<object>.Fail(ex.Message, context.TraceIdentifier);
+
+                    _logger.LogWarning(ex, "Unauthorized access: {Message}", ex.Message);
+                    break;
+
                 default:
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     result = Result<object>.Fail("Unexpected erro.", context.TraceIdentifier);
