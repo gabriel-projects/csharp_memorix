@@ -10,7 +10,7 @@ namespace Api.GRRInnovations.Memorix.Application.Wrappers.Out
         public WrapperOutUserFull(IUser data) : base(data) { }
 
 
-        [JsonPropertyName("Decks")]
+        [JsonPropertyName("decks")]
         public List<WrapperOutDeck> Decks { get; set; }
 
         public override async Task Populate(IUser data)
