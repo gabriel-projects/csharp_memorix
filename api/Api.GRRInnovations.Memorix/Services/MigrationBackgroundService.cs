@@ -1,8 +1,3 @@
-using Api.GRRInnovations.Memorix.Infrastructure.Helpers;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Hosting;
 using Api.GRRInnovations.Memorix.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
