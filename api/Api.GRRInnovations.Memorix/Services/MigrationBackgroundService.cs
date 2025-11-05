@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
+using Api.GRRInnovations.Memorix.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.GRRInnovations.Memorix.Services
 {
@@ -26,10 +28,9 @@ namespace Api.GRRInnovations.Memorix.Services
         {
             try
             {
-                _logger.LogInformation("Applying database migrations...");
+                _logger.LogInformation("Migration check service started.");
 
-                using var scope = _serviceProvider.CreateScope();
-                await MigrationHelper.ManageDataAsync(scope.ServiceProvider);
+                await CheckAndApplyMigrationsAsync();
 
                 _logger.LogInformation("Database migrations completed successfully.");
             }
@@ -40,6 +41,25 @@ namespace Api.GRRInnovations.Memorix.Services
             }
             
             return;
+        }
+
+        private async Task CheckAndApplyMigrationsAsync()
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            var pending = await dbContext.Database.GetPendingMigrationsAsync();
+
+            if (pending.Any())
+            {
+                _logger.LogWarning($"Found {pending.Count()} pending migrations. Applying...");
+                await dbContext.Database.MigrateAsync();
+                _logger.LogInformation("Migrations applied successfully.");
+            }
+            else
+            {
+                _logger.LogInformation("No pending migrations found.");
+            }
         }
     }
 }
