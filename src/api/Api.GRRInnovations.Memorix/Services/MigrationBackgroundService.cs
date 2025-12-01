@@ -32,7 +32,6 @@ namespace Api.GRRInnovations.Memorix.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to apply database migrations on startup");
-                throw;
             }
             
             return;
