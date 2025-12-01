@@ -56,8 +56,8 @@ namespace Api.GRRInnovations.Memorix.Infrastructure.Persistence
                 )
                 .HasMaxLength(150)
                 .IsRequired();
-            modelBuilder.Entity<User>().Property(x => x.PasswordHash).HasMaxLength(150).IsRequired();
-            modelBuilder.Entity<User>().Property(x => x.Name).HasMaxLength(150).IsRequired();
+            modelBuilder.Entity<User>().Property(x => x.PasswordHash).HasMaxLength(DataSchemaConstants.PASSWORD_HASH_LENGTH).IsRequired();
+            modelBuilder.Entity<User>().Property(x => x.Name).HasMaxLength(DataSchemaConstants.MAX_NAME_LENGTH).IsRequired();
 
             DefaultModelSetup<RefreshToken>(modelBuilder);
             modelBuilder.Entity<RefreshToken>()
