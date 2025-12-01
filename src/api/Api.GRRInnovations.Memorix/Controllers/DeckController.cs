@@ -75,7 +75,7 @@ namespace Api.GRRInnovations.Memorix.Controllers
             var deckModel = await wrapperInDeck.Result();
             if (deckModel == null)
             {
-                return BadRequest("Invalid deck data.");
+                return BadRequest("Invalid input deck data.");
             }
 
             var user = await _userService.GetUserByUidAsync(userId);
