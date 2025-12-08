@@ -12,20 +12,14 @@ namespace Api.GRRInnovations.Memorix.Application.Wrappers
         /// <summary>
         /// Indicates whether the operation was successful
         /// </summary>
-        [JsonPropertyName("is_success")]
+        [JsonPropertyName("success")]
         public bool IsSuccess { get; private set; }
 
         /// <summary>
-        /// Indicates whether the operation failed
+        /// The data returned on success (only available when IsSuccess is true)
         /// </summary>
-        [JsonPropertyName("is_failure")]
-        public bool IsFailure => !IsSuccess;
-
-        /// <summary>
-        /// The value returned on success (only available when IsSuccess is true)
-        /// </summary>
-        [JsonPropertyName("value")]
-        public T? Value { get; private set; }
+        [JsonPropertyName("data")]
+        public T? Data { get; private set; }
 
         /// <summary>
         /// The error information (only available when IsFailure is true)
@@ -42,7 +36,7 @@ namespace Api.GRRInnovations.Memorix.Application.Wrappers
         private Result(T value, string? traceId = null)
         {
             IsSuccess = true;
-            Value = value;
+            Data = value;
             TraceId = traceId;
             Error = null;
         }
@@ -52,7 +46,7 @@ namespace Api.GRRInnovations.Memorix.Application.Wrappers
             IsSuccess = false;
             Error = error ?? Error.None;
             TraceId = traceId;
-            Value = default;
+            Data = default;
         }
 
         /// <summary>
